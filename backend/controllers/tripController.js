@@ -29,21 +29,31 @@ const getUserTrips = async (req,res) => {
 };
 
 const joinTrip = async (req,res) => {
-    try
+
+    const { tripId } = req.body;
+    const userId = req.user.id;
+
+    try 
     {
-        const trip = await Trip.findById(req.params.id);
-        if(!trip.members.includes(req.userId))
+        const trip = await Trip.findById(tripId);
+        if (!trip) return res.status(404).json({ msg: 'Trip not found' });
+
+        if (trip.members.includes(userId)) 
         {
-            trip.members.push(req.userId);
-            await trip.save();
+        return res.status(400).json({ msg: 'Already joined' });
         }
-        res.json(trip);
-    }
-    catch(err)
+
+        trip.members.push(userId);
+        await trip.save();
+
+        res.status(200).json({ msg: 'Successfully joined the trip' });
+    } 
+    catch (err) 
     {
-        res.status(500).json({msg: err.message});
+        console.error(err);
+        res.status(500).json({ msg: 'Error joining trip' });
     }
-}
+};
 
 const addTodo = async (req,res) => {
     const {task} = req.body;

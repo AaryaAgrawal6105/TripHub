@@ -45,4 +45,81 @@ const joinTrip = async (req,res) => {
     }
 }
 
-module.exports = { createTrip, getUserTrips, joinTrip };
+const addTodo = async (req,res) => {
+    const {task} = req.body;
+    const trip = await Trip.findById(req.params.id);
+    if(!trip)
+    {
+        return res.status(404).json({msg: 'Trip not found'});
+    }
+    trip.todos.push({task, done: false});
+    await trip.save();
+    res.json(trip.todos);
+};
+
+const toggleTodo = async (req,res) => {
+    const trip = await Trip.findById(req.params.id);
+    const todo = trip.todos.id(req.params.todoId);
+    if(!todo)
+    {
+        return res.status(404).json({msg: 'Todo not found'})
+    }
+
+    todo.done = !todo.done;
+    await trip.save();
+    res.json(trip.done);
+};
+
+const deleteTodo = async (req,res) => {
+    const trip = await Trip.findById(req.params.id);
+    trip.todos = trip.todos.filter(t => t._id.toString() !== req.params.todoId);
+    await trip.save();
+    res.json(trip.todos);
+};
+
+const addBudget = async (req,res) => {
+    const {description, amount} = req.body;
+    const trip = await Trip.findById(req.params.id);
+    trip.budget.push({description, amount});
+    await trip.save();  
+    res.json(trip.budget);
+};
+
+const deleteBudget = async (req,res) => {
+    const trip = await Trip.findById(req.params.id);
+    trip.budget = trip.budget.filter(b => b._id.toString() !== req.params.budgetId);
+    await trip.save();
+    res.json(trip.budget);
+};
+
+const addItinerary  = async (req,res) => {
+    const {day, title, description} = req.body;
+    const trip = await Trip.findById(req.params.id);
+    trip.itinerary.push({day, title, description});
+    await trip.save();
+    res.json(trip.itinerary);
+}
+
+const deleteItinerary = async (req,res) => {
+    const trip = await Trip.findById(req.params.id);
+    trip.itinerary = trip.itinerary.filter(i => i._id.toString() !== req.params.itineraryId);
+    await trip.save();
+    res.json(trip.itinerary);
+};
+
+const addComment = async (req,res) => {
+    const {comment} = req.body;
+    const trip = await Trip.findById(req.params.id);
+    trip.comments.push({user: req.userId, comment});
+    await trip.save();
+    res.json(trip.comments);
+};
+
+const deleteComment = async (req,res) => {
+    const trip =  await Trip.findById(req.params.id);
+    trip.comments = trip.comments.filter(c => !(c._id.toString() === req.params.commentId && c.user.toString() === req.userId));
+    await trip.save();
+    res.json(trip.comments);
+};
+
+module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment};

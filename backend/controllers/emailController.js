@@ -1,10 +1,10 @@
 const nodemailer = require('nodemailer');
 const Trip = require('../models/Trip');
-const User = require('../models/User');
+//const User = require('../models/User');
 
 const sendTripInvite = async (req, res) => {
     const {tripId, receiverEmail} = req.body;
-    const senderId = req.user.id;
+    const senderId = req.body._id;
 
     try
     {
@@ -19,7 +19,7 @@ const sendTripInvite = async (req, res) => {
             return res.status(403).json({msg: 'Only trip creator can send invite links'});
         }
 
-        const inviteLink = `https://triphub.com/join/${trip._id}?inviter=${senderId}`;
+        const inviteLink = `https://localhost:5000/api/email/join/${trip._id}?inviter=${senderId}`;
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -30,9 +30,9 @@ const sendTripInvite = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: `"${trip.creatorBy.name} via TripHub" <${process.env.EMAIL_ID}>`,
+            from: `"${trip.createdBy.name} via TripHub" <${process.env.EMAIL_ID}>`,
             to: receiverEmail,
-            subject: `{trip.creatorBy.name} invited you to join a trip on TripHub`,
+            subject: `${trip.createdBy.name} invited you to join a trip on TripHub`,
             html: `
                 <h2>${trip.createdBy.name} invited you</h2>
                 <p>You’ve been invited to join the trip: <b>${trip.name}</b></p>
@@ -51,4 +51,4 @@ const sendTripInvite = async (req, res) => {
     }
 };
 
-module.exports = sendTripInvite;
+module.exports = {sendTripInvite};

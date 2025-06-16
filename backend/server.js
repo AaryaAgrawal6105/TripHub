@@ -7,6 +7,7 @@ dotenv.config();
 
 const tripRoutes = require('./routes/tripRoutes');
 const authRoutes = require('./routes/authRoutes');
+const emailRoutes = require('./routes/emailRoutes'); 
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/email',  emailRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`The server is running on port ${process.env.PORT}`)

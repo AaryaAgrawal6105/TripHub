@@ -32,7 +32,7 @@ const joinTrip = async (req,res) => {
 
     const { tripId } = req.body;
     const userId = req.user.id;
-
+    //Check again after front end
     try 
     {
         const trip = await Trip.findById(tripId);

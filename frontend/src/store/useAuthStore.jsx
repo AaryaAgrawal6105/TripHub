@@ -28,6 +28,7 @@ export const useAuthStore = create((set, get) =>
     signup: async (data) => {
         set({ isSigningUp: true })
         try {
+            console.log("Sending signup data:", data);
             const response = await API.post('/auth/register', data);
             set({ authUser: response.data })
             toast.success("Account created successfully")

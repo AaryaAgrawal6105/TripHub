@@ -72,8 +72,7 @@ export default function Signup() {
             Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
           </p>
 
-          <img src="https://i.imgur.com/kYFyAzJ.png" alt="city" className="mt-6 mx-auto w-32 opacity-60" />
-        </div>
+                  </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 // import Dashboard from './pages/Dashboard'
 import './App.css'
-import Signup from './pages/Signup'
+
 import Profile from './pages/Profile'
 function App() {
 

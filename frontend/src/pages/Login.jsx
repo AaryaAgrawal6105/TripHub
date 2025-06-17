@@ -68,7 +68,7 @@ export default function Login() {
             Don’t have an account? <Link to="/signup" className="text-blue-600 hover:underline">Register Now</Link>
           </p>
 
-          <img src="https://i.imgur.com/kYFyAzJ.png" alt="city" className="mt-6 mx-auto w-32 opacity-60" />
+          
         </div>
       </div>
     </div>

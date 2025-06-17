@@ -28,14 +28,23 @@ export const useAuthStore = create((set, get) =>
     signup: async (data) => {
         set({ isSigningUp: true })
         try {
+            const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!gmailRegex.test(data.email)) {
+            toast.error("Please enter a valid Gmail address");
+            return;
+            }
             const response = await axiosInstance.post('/auth/register', data);
-            console.log("response in the signup", response)
+            // console.log("response in the signup", response)
             set({ authUser: response.data })
             toast.success("Account created successfully")
-            
-
-        } catch (error) {
-            toast.error(error.response.data.message);
+        } 
+        catch (error) 
+        {
+            const errorMsg =
+            error.response?.data?.msg ||
+            error.message ||
+            "Signup failed";
+            toast.error(errorMsg);
         } finally { set({ isSigningUp: false }) }
     },
     login: async (data) => {

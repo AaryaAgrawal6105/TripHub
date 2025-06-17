@@ -57,7 +57,7 @@ const login = async (req,res) => {
 
 const checkAuth=  async(req, res)=>{
     try {
-        return res.status(200).json(req.user)
+        return res.status(200).json({user:req.user})
     } catch (error) {
         console.log("Error in the checkAuth controller" , error.message);
 
@@ -66,5 +66,14 @@ const checkAuth=  async(req, res)=>{
 
 }
 
+const logout = async (req, res) => {
+    try {
+        // Invalidate the token on the client side by removing it
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.log("Error in the logout controller", error.message);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
-module.exports = {register, login , checkAuth};
+module.exports = {register, login , checkAuth, logout};

@@ -12,11 +12,13 @@ import Navbar from './components/Navbar';
 
 function App() {
   const location = useLocation(); // 👈 Hook to get current route path
-  const { authUser, checkAuth } = useAuthStore();
+  const { authUser } = useAuthStore();
+const checkAuth = useAuthStore(state => state.checkAuth);
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+useEffect(() => {
+  checkAuth();
+}, []);
+
 
   // Check if we're on login or signup page
   const hideNavbar = location.pathname === '/login' || location.pathname === '/signup';

@@ -4,8 +4,13 @@ const User = require('../models/User');
 
 const register = async (req,res) => {
     const { name, email, password} = req.body;
+    // console.log("Received data:", req.body);
     try
     {
+        if (!name || !email || !password) 
+        {
+            return res.status(400).json({ msg: 'All fields are required' });
+        }
         const existingUser = await User.findOne({email});
         if(existingUser) return res.status(400).json({ msg: 'User already exists'});
 

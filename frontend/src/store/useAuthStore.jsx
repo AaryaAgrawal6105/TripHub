@@ -13,18 +13,20 @@ export const useAuthStore = create((set, get) =>
 
 
     checkAuth: async () => {
-        try {
-            const res = await axiosInstance.get('/auth/check');
-            set({ authUser: res.data })
+    const token = localStorage.getItem('authToken');
+    if (!token) return set({ authUser: null });
 
-        } catch (error) {
-            console.log("error in the useAuthstore", error.message)
-            set({ authUser: null });
-
-        } finally {
-            set({ isCheckingAuth: false })
-        }
+    try {
+        const res = await axiosInstance.get('/auth/check-auth'); // this includes token via interceptor
+        console.log(res.data.user);
+        set({ authUser: res.data.user }); // backend should return user info
+    } catch (error) {
+        console.log("Auth check failed", error.message);
+        localStorage.removeItem('authToken');  // clear invalid token
+        set({ authUser: null });
+    }
     },
+
     signup: async (data) => {
         set({ isSigningUp: true })
         try {
@@ -49,22 +51,25 @@ export const useAuthStore = create((set, get) =>
         } finally { set({ isSigningUp: false }) }
     },
     login: async (data, navigate) => {
-        set({ isLogginIn: true })
-        try {
-            const response = await axiosInstance.post('/auth/login', data);
-            set({ authUser: response.data })
-            toast.success("Logged in successfully");
+  set({ isLogginIn: true });
+  try {
+    const response = await axiosInstance.post('/auth/login', data);
 
-        }
-        catch (error) {
-            const errorMsg =
-                error.response?.data?.msg ||
-                error.message ||
-                "Signup failed";
-            toast.error(errorMsg);
-        } finally { set({ isLogginIn: false }) }
+    const token = response.data.token; 
+    localStorage.setItem('authToken', token);
 
-    },
+    set({ authUser: response.data.user });  
+
+    toast.success("Logged in successfully");
+    navigate('/');  
+  } catch (error) {
+    const errorMsg = error.response?.data?.msg || error.message || "Login failed";
+    toast.error(errorMsg);
+  } finally {
+    set({ isLogginIn: false });
+  }
+},
+
     // logout: async () => {
     //     try {
     //         await axiosInstance.post('auth/logout');

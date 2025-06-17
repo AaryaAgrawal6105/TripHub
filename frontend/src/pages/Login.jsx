@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaLock, FaGoogle, FaFacebook, FaApple } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore'; 
+// import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const { login } = useAuthStore(); 
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
     console.log('Logging in with:', email, password);
+
+    e.preventDefault();
+
+    login({email, password}, navigate);
   };
 
   return (

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import {axiosInstance} from '../api';
-import {toast} from 'react-toastify'
+import {toast} from 'react-toastify';
 
 const BASE_URL = "http://localhost:5000"
 export const useAuthStore = create((set, get) =>
@@ -36,7 +36,9 @@ export const useAuthStore = create((set, get) =>
             const response = await axiosInstance.post('/auth/register', data);
             // console.log("response in the signup", response)
             set({ authUser: response.data })
-            toast.success("Account created successfully")
+            toast.success("Account created successfully");
+            console.log("Redirecting to dashboard...");
+            navigate('/dashboard');
         } 
         catch (error) 
         {
@@ -47,15 +49,21 @@ export const useAuthStore = create((set, get) =>
             toast.error(errorMsg);
         } finally { set({ isSigningUp: false }) }
     },
-    login: async (data) => {
+    login: async (data, navigate) => {
         set({ isLogginIn: true })
         try {
             const response = await axiosInstance.post('/auth/login', data);
             set({ authUser: response.data })
             toast.success("Logged in successfully");
-           
-        } catch (error) {
-            toast.error(error.response.data.message);
+            
+        } 
+        catch (error) 
+        {
+            const errorMsg =
+            error.response?.data?.msg ||
+            error.message ||
+            "Signup failed";
+            toast.error(errorMsg);
         } finally { set({ isLogginIn: false }) }
 
     },

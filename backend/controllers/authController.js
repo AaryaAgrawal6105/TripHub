@@ -17,7 +17,7 @@ const register = async (req,res) => {
         const hashed = await bcrypt.hash(password, 10);
         const newUser = await User.create({ name, email, password: hashed});
 
-        const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET);
+        const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET,{expiresIn: '2d'});
         res.status(201).json({ user: newUser, token});
     }
     catch(err)
@@ -46,7 +46,7 @@ const login = async (req,res) => {
             return res.status(400).json({ msg: `Invalid password`});
         }
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET , {expiresIn: '2d'});
         res.json({user, token});
     }
     catch(err)
@@ -55,4 +55,16 @@ const login = async (req,res) => {
     }
 };
 
-module.exports = {register, login};
+const checkAuth=  async(req, res)=>{
+    try {
+        return res.status(200).json(req.user)
+    } catch (error) {
+        console.log("Error in the checkAuth controller" , error.message);
+
+            return res.status(500).json({ message: "Internal  Server Error" })
+    }
+
+}
+
+
+module.exports = {register, login , checkAuth};

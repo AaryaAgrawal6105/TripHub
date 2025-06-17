@@ -1,20 +1,22 @@
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
-    if(!token)
-    {
+    if (!token) {
         return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    try
-    {
+    try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded token:", decoded);
+
         req.userId = decoded.id;
+
+        const user = await User.findById(decoded.userId).select("-password");
+        req.user = user;
         next();
     }
-    catch(err)
-    {
+    catch (err) {
         res.status(401).json({ msg: 'Invalid token' });
     }
 };

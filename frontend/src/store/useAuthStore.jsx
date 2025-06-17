@@ -13,19 +13,19 @@ export const useAuthStore = create((set, get) =>
 
 
     checkAuth: async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) return set({ authUser: null });
+  const token = localStorage.getItem('authToken');
+  if (!token) return set({ authUser: null });
 
-    try {
-        const res = await axiosInstance.get('/auth/check-auth'); // this includes token via interceptor
-        console.log(res.data.user);
-        set({ authUser: res.data.user }); // backend should return user info
-    } catch (error) {
-        console.log("Auth check failed", error.message);
-        localStorage.removeItem('authToken');  // clear invalid token
-        set({ authUser: null });
-    }
-    },
+  try {
+    const res = await axiosInstance.get('/auth/check-auth');
+    console.log(res.data.user);
+    set({ authUser: res.data.user });
+  } catch (error) {
+    console.log("Auth check failed", error.message);
+    localStorage.removeItem('authToken');
+    set({ authUser: null });
+  }
+},
 
     signup: async (data) => {
         set({ isSigningUp: true })
@@ -70,16 +70,19 @@ export const useAuthStore = create((set, get) =>
   }
 },
 
-    // logout: async () => {
-    //     try {
-    //         await axiosInstance.post('auth/logout');
-    //         set({ authUser: null });
-    //         toast.success('logged out successfully ')
-    //         get().disconnectSocket();
-    //     } catch (error) {
-    //         toast.error("unable to logout")
-    //     }
-    // },
+    logout: async () => {
+        try {
+            await axiosInstance.post('auth/logout');
+            set({ authUser: null });
+            localStorage.removeItem('authToken');
+          
+            
+            toast.success('logged out successfully ')
+           
+        } catch (error) {
+            toast.error("unable to logout")
+        }
+    },
     // updateProfile: async (data) => {
     //     set({ isUpdatingProfile: true });
     //     try {

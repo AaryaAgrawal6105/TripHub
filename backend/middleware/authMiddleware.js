@@ -12,7 +12,6 @@ const authMiddleware = async (req, res, next) => {
 
     req.userId = decoded.id;
 
-<<<<<<< HEAD
         const user = await User.findById(decoded.id).select("-password");
         req.user = user;
         next();
@@ -20,14 +19,6 @@ const authMiddleware = async (req, res, next) => {
     catch (err) {
         res.status(401).json({ msg: 'Invalid token' });
     }
-=======
-    const user = await User.findById(decoded.id).select("-password");
-    req.user = user;
-    next();
-  } catch (err) {
-    res.status(401).json({ msg: 'Invalid token' });
-  }
->>>>>>> 9c9183df7426267dfdd02d7fed7ac58db373fad6
 };
 
 

@@ -57,7 +57,7 @@ const login = async (req,res) => {
 
 const checkAuth=  async(req, res)=>{
     try {
-        return res.status(200).json(req.user)
+        return res.status(200).json({ user: req.user });
     } catch (error) {
         console.log("Error in the checkAuth controller" , error.message);
 

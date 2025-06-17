@@ -53,7 +53,7 @@ const  Signup = ()=> {
             <label className="text-gray-700 mb-1 block">Name</label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <FaUser className="text-gray-400 mr-2" />
-              <input type="text" placeholder="Your Name" className="w-full outline-none"
+              <input type="text" placeholder="Your Name" className="w-full outline-none" value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
             </div>
           </div>
@@ -62,7 +62,7 @@ const  Signup = ()=> {
             <label className="text-gray-700 mb-1 block">Email</label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <FaEnvelope className="text-gray-400 mr-2" />
-              <input type="email" placeholder="you@mail.com" className="w-full outline-none"
+              <input type="email" placeholder="you@mail.com" className="w-full outline-none" value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
             </div>
           </div>
@@ -71,7 +71,7 @@ const  Signup = ()=> {
             <label className="text-gray-700 mb-1 block">Password</label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <FaLock className="text-gray-400 mr-2" />
-              <input type="password" placeholder="********" className="w-full outline-none"
+              <input type="password" placeholder="********" className="w-full outline-none" value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
             </div>
           </div>

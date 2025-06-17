@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import API from '../api';
+import {axiosInstance} from '../api';
 import {toast} from 'react-toastify'
 
 const BASE_URL = "http://localhost:5000"
@@ -28,8 +28,8 @@ export const useAuthStore = create((set, get) =>
     signup: async (data) => {
         set({ isSigningUp: true })
         try {
-            console.log("Sending signup data:", data);
-            const response = await API.post('/auth/register', data);
+            const response = await axiosInstance.post('/auth/register', data);
+            console.log("response in the signup", response)
             set({ authUser: response.data })
             toast.success("Account created successfully")
             
@@ -41,7 +41,7 @@ export const useAuthStore = create((set, get) =>
     login: async (data) => {
         set({ isLogginIn: true })
         try {
-            const response = await API.post('/auth/login', data);
+            const response = await axiosInstance.post('/auth/login', data);
             set({ authUser: response.data })
             toast.success("Logged in successfully");
            

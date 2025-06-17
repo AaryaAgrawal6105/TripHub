@@ -1,13 +1,38 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaLock, FaUser, FaGoogle, FaFacebook, FaApple } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+// import { toast } from 'react-toastify';
+import { useAuthStore } from '../store/useAuthStore'; // Adjust the import path as necessary
 
-export default function Signup() {
+
+const  Signup = ()=> {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+ const { signup, isSigningUp } = useAuthStore();
 
-  const handleSignup = () => {
-    console.log('Signing up:', formData);
-  };
+// const validateForm = () => {
+//     if (!formData.fullName.trim()) return toast.error("Full name is required");
+//     if (!formData.email.trim()) return toast.error("Email is required");
+//     if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Invalid email format");
+//     if (!formData.password) return toast.error("Password is required");
+//     if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
+
+//     return true;
+//   };
+
+
+
+  const handleSignup = (e) => {
+    
+        
+    e.preventDefault();
+
+    // const success = validateForm();
+
+    // if (success === true) 
+     signup(formData);
+
+
+      };
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-white">
@@ -77,3 +102,6 @@ export default function Signup() {
     </div>
   );
 }
+
+
+export default Signup;

@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthStore } from './store/useAuthStore';
 import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import HomeNavbar from './components/HomeNavBar';
 
 function App() {
   const location = useLocation(); // 👈 Hook to get current route path
@@ -21,13 +23,20 @@ useEffect(() => {
 
 
   // Check if we're on login or signup page
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/signup';
+  const hideNavbar =
+    location.pathname === "/login" || location.pathname === "/signup";
+  const showHomeNavbar = location.pathname === "/home";
 
   return (
     <div className="App">
-      {!hideNavbar && <Navbar />} 
+      {!hideNavbar && (
+        <>
+          {showHomeNavbar ? <HomeNavbar /> : <Navbar />}
+        </>
+      )}
 
       <Routes>
+        <Route path="/home" element={<Home />} />
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />

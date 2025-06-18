@@ -1,0 +1,41 @@
+import bg from "../assets/bgImage.jpg";
+import { useAuthStore } from '../store/useAuthStore'; 
+import { useNavigate } from 'react-router-dom';
+
+const Home = () => {
+
+    const navigate = useNavigate();
+    const { authUser } = useAuthStore();
+    const handleStartPlanning = () => {
+    if (authUser) {
+      navigate("/"); // or "/dashboard"
+    } else {
+      navigate("/login");
+    }
+  };
+
+  return (
+    <>
+    {/* Background Image not visible, check if the path is correct */}
+    <div
+      className="h-[90vh] bg-cover bg-center relative flex items-center justify-center text-white"
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+        {console.log(bg)};
+      <div className="bg-black bg-opacity-50 absolute inset-0" />
+      <div className="relative z-10 text-center max-w-2xl px-4">
+        <h1 className="text-5xl font-bold mb-4">Explore. Plan. Travel.</h1>
+        <p className="text-lg mb-6">Your all-in-one trip planner for unforgettable journeys</p>
+        <button
+          onClick={handleStartPlanning}
+          className="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 transition"
+        >
+          Start Planning
+        </button>
+      </div>
+    </div>
+    </>
+  );
+};
+
+export default Home;

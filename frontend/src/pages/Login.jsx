@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
-    console.log('Logging in with:', email, password);
+    // console.log('Logging in with:', email, password);
 
     e.preventDefault();
 

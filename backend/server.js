@@ -9,6 +9,7 @@ const tripRoutes = require('./routes/tripRoutes');
 const authRoutes = require('./routes/authRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const blogRoutes = require('./routes/blogRoutes'); 
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 app.use(cors(
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/email',  emailRoutes);
 app.use("/api/home/blogs", blogRoutes);
+app.use('/api/user', userRoutes);
 
 
 app.listen(process.env.PORT, () => {

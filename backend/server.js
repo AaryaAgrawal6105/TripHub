@@ -4,7 +4,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 
-
 const tripRoutes = require('./routes/tripRoutes');
 const authRoutes = require('./routes/authRoutes');
 const emailRoutes = require('./routes/emailRoutes');

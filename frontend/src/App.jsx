@@ -11,6 +11,7 @@ import { useAuthStore } from './store/useAuthStore';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import HomeNavbar from './components/HomeNavBar';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   const location = useLocation(); // 👈 Hook to get current route path
@@ -37,6 +38,7 @@ useEffect(() => {
 
       <Routes>
         <Route path="/home" element={<Home />} />
+        <Route path="/home/blogs" element={<BlogPage />} />
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />

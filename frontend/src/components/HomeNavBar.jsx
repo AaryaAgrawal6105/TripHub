@@ -13,7 +13,7 @@ const HomeNavbar = () => {
       {/* Center: Navigation Links (Blogs, About Us) */}
       <div className="flex gap-8">
         <NavLink
-          to="/blogs"
+          to="/home/blogs"
           className={({ isActive }) =>
             `text-lg font-semibold transition ${
               isActive

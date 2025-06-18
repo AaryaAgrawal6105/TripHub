@@ -11,6 +11,8 @@ import { useAuthStore } from './store/useAuthStore';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import HomeNavbar from './components/HomeNavBar';
+import About from './pages/About';
+import Footer from './components/Footer';
 
 function App() {
   const location = useLocation(); // 👈 Hook to get current route path
@@ -41,8 +43,10 @@ useEffect(() => {
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/about" element={<About />} />
       </Routes>
 
+      {!hideNavbar && <Footer />}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

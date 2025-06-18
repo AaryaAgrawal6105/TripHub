@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const blogRoutes = require('./routes/blogRoutes'); 
 const userRoutes = require('./routes/userRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 const app = express();
 app.use(cors(
@@ -28,6 +29,7 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/email',  emailRoutes);
 app.use("/api/home/blogs", blogRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/events', eventRoutes);
 
 
 app.listen(process.env.PORT, () => {

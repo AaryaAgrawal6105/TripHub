@@ -1,9 +1,14 @@
 // src/components/CalendarModal.jsx
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import {
+  XMarkIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/solid";
 import { twMerge } from "tailwind-merge";
-import { axiosInstance } from "../api";  // your configured instance
+import { axiosInstance } from "../api";
 
 const COLORS = [
   "bg-gradient-to-r from-sky-300 to-blue-500 text-white",
@@ -24,38 +29,49 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [eventText, setEventText] = useState("");
-  const [events, setEvents] = useState({});
+  const [events, setEvents] = useState({}); // { 'yyyy-mm-dd': [{_id, text, color}] }
 
-  // 1️⃣ Fetch events when modal opens
   useEffect(() => {
     if (!isOpen) return;
     axiosInstance
       .get("/events")
       .then((res) => {
-        // res.data: [{ _id, userId, date, text, color }, ...]
         const formatted = {};
-        res.data.forEach(({ date, text, color }) => {
-          formatted[date] = formatted[date] || [];
-          formatted[date].push({ text, color });
-        });
+        res.data
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach(({ _id, date, text, color }) => {
+            formatted[date] = formatted[date] || [];
+            formatted[date].push({ _id, text, color });
+          });
         setEvents(formatted);
       })
       .catch((err) => console.error("Failed to load events:", err));
   }, [isOpen]);
 
-  // 2️⃣ Add a new event
   const addEvent = async () => {
     const text = eventText.trim();
-    if (!text) return;
-
     const dateKey = getLocalDateKey(selectedDate);
+    const todayKey = getLocalDateKey(new Date());
+
+    if (!text) return;
+    if (selectedDate < new Date(todayKey)) {
+      alert("Cannot add events in the past.");
+      return;
+    }
+
     const color = getColor();
 
     try {
-      await axiosInstance.post("/events", { date: dateKey, text, color });
+      const res = await axiosInstance.post("/events", {
+        date: dateKey,
+        text,
+        color,
+      });
+      const newEvent = res.data;
+
       setEvents((prev) => ({
         ...prev,
-        [dateKey]: [...(prev[dateKey] || []), { text, color }],
+        [dateKey]: [...(prev[dateKey] || []), newEvent],
       }));
       setEventText("");
     } catch (err) {
@@ -63,10 +79,22 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
     }
   };
 
-  // Calendar utility functions
+  const deleteEvent = async (eventId, dateKey) => {
+    try {
+      await axiosInstance.delete(`/events/${eventId}`);
+      setEvents((prev) => {
+        const updated = { ...prev };
+        updated[dateKey] = updated[dateKey].filter((ev) => ev._id !== eventId);
+        if (updated[dateKey].length === 0) delete updated[dateKey];
+        return updated;
+      });
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
   const getDaysInMonth = (date) =>
     new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
   const getFirstDayOfMonth = (date) =>
     new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
@@ -74,14 +102,10 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
     );
-
   const nextMonth = () =>
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
     );
-
-  const formatMonthYear = (date) =>
-    date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
@@ -90,111 +114,97 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
     const firstDayOfMonth = getFirstDayOfMonth(currentDate);
 
     const days = [];
-
-    // previous month's tail
     const prevDays = getDaysInMonth(new Date(year, month - 1, 1));
     for (let i = prevDays - firstDayOfMonth + 1; i <= prevDays; i++) {
       days.push({ date: new Date(year, month - 1, i), isCurrentMonth: false });
     }
-
-    // current month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({ date: new Date(year, month, i), isCurrentMonth: true });
     }
-
-    // next month's head
     while (days.length < 42) {
       const nextDay = days.length - (firstDayOfMonth + daysInMonth) + 1;
       days.push({ date: new Date(year, month + 1, nextDay), isCurrentMonth: false });
     }
-
     return days;
   };
 
-  const days = generateCalendarDays();
   const weekdays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  const todayKey = getLocalDateKey(new Date());
 
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-      <div className="fixed inset-0 bg-gradient-to-br from-amber-100/70 via-rose-100/70 to-blue-100/70" />
+    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="z-50 relative">
+      <div className="fixed inset-0 bg-gradient-to-br from-yellow-100 via-rose-100 to-blue-100" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="bg-white/90 backdrop-blur-md rounded-3xl w-full max-w-5xl p-6 relative shadow-2xl border-2 border-white transform scale-[0.95] md:scale-100">
-          {/* Decorative blobs */}
-          <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-r from-amber-200/30 to-orange-300/30 blur-xl" />
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-r from-sky-200/30 to-blue-300/30 blur-xl" />
-
-          {/* Close button */}
+        <Dialog.Panel className="relative w-full max-w-5xl p-6 bg-white rounded-3xl shadow-xl backdrop-blur-md">
+          {/* Close */}
           <button
-            className="absolute right-4 top-4 w-8 h-8 rounded-full bg-gradient-to-r from-rose-100 to-pink-200 flex items-center justify-center text-pink-500 border border-pink-100 hover:scale-105 transition-all"
+            className="absolute top-4 right-4 bg-pink-200 p-2 rounded-full hover:scale-105 transition"
             onClick={() => setIsOpen(false)}
           >
-            <XMarkIcon className="w-4 h-4" />
+            <XMarkIcon className="w-4 h-4 text-pink-600" />
           </button>
 
-          {/* Title */}
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 tracking-tight">
+            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
               Adventure Planner
             </h2>
-            <p className="text-sm text-gray-600 mt-1 font-medium">
-              Mark your travel moments ✈️
-            </p>
+            <p className="text-gray-600 text-sm">Mark your travel moments ✈️</p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Calendar */}
             <div className="lg:w-3/4">
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 border border-gray-100 shadow-md">
-                <div className="flex items-center justify-between mb-4">
-                  <button onClick={prevMonth} className="p-1 rounded-full hover:bg-gray-100">
-                    <ChevronLeftIcon className="w-4 h-4 text-gray-600" />
+              <div className="bg-white p-4 rounded-2xl shadow border">
+                <div className="flex justify-between items-center mb-4">
+                  <button onClick={prevMonth}>
+                    <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
                   </button>
-                  <h3 className="text-lg font-bold text-gray-700">
-                    {formatMonthYear(currentDate)}
+                  <h3 className="font-bold text-lg text-gray-800">
+                    {currentDate.toLocaleDateString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </h3>
-                  <button onClick={nextMonth} className="p-1 rounded-full hover:bg-gray-100">
-                    <ChevronRightIcon className="w-4 h-4 text-gray-600" />
+                  <button onClick={nextMonth}>
+                    <ChevronRightIcon className="w-5 h-5 text-gray-600" />
                   </button>
                 </div>
 
-                {/* Weekday labels */}
-                <div className="grid grid-cols-7 gap-0.5 mb-1">
+                <div className="grid grid-cols-7 gap-1 mb-1">
                   {weekdays.map((d) => (
-                    <div key={d} className="text-center py-1 text-xs font-medium text-gray-500">
+                    <div key={d} className="text-xs text-center font-semibold text-gray-500">
                       {d}
                     </div>
                   ))}
                 </div>
 
-                {/* Days */}
-                <div className="grid grid-cols-7 gap-0.5">
-                  {days.map((day, idx) => {
+                <div className="grid grid-cols-7 gap-1">
+                  {generateCalendarDays().map((day, idx) => {
                     const key = getLocalDateKey(day.date);
                     const isSelected = getLocalDateKey(selectedDate) === key;
+                    const isToday = key === todayKey;
                     const dayEvents = events[key] || [];
 
                     return (
                       <button
                         key={idx}
+                        disabled={day.date < new Date(todayKey)}
                         className={twMerge(
-                          "h-12 flex flex-col items-center justify-center rounded-lg text-xs font-medium",
+                          "h-12 text-xs flex flex-col items-center justify-center rounded-md",
                           day.isCurrentMonth ? "text-gray-700" : "text-gray-400",
-                          isSelected ? "bg-blue-100 ring-1 ring-blue-300" : "hover:bg-gray-100"
+                          isSelected ? "bg-blue-200 ring-2 ring-blue-400" : "hover:bg-gray-100",
+                          day.date < new Date(todayKey) ? "opacity-60 cursor-not-allowed" : ""
                         )}
-                        onClick={() => {
-                          setSelectedDate(day.date);
-                          if (!day.isCurrentMonth) {
-                            setCurrentDate(
-                              new Date(day.date.getFullYear(), day.date.getMonth(), 1)
-                            );
-                          }
-                        }}
+                        onClick={() => setSelectedDate(day.date)}
                       >
                         <span>{day.date.getDate()}</span>
                         {dayEvents.length > 0 && (
-                          <div className="mt-0.5 flex gap-0.5 flex-wrap justify-center">
+                          <div className="flex mt-1 gap-0.5">
                             {dayEvents.map((ev, i) => (
-                              <div key={i} className={twMerge("w-1.5 h-1.5 rounded-full", ev.color)} />
+                              <div
+                                key={i}
+                                className={twMerge("w-1.5 h-1.5 rounded-full", ev.color)}
+                              />
                             ))}
                           </div>
                         )}
@@ -204,19 +214,19 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
                 </div>
               </div>
 
-              {/* Input + Add */}
-              <div className="mt-6 flex gap-2">
+              {/* Add Event */}
+              <div className="mt-4 flex gap-2">
                 <input
                   type="text"
-                  placeholder={`✏️ What's happening on ${getLocalDateKey(selectedDate)}?`}
-                  className="flex-1 border-0 bg-gray-100/70 rounded-lg px-3 py-2 shadow-inner focus:outline-none focus:ring-1 focus:ring-blue-300 placeholder:text-gray-500 text-sm font-medium"
+                  className="w-full border px-3 py-2 rounded shadow-sm text-sm"
+                  placeholder={`What's happening on ${getLocalDateKey(selectedDate)}?`}
                   value={eventText}
                   onChange={(e) => setEventText(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && addEvent()}
                 />
                 <button
                   onClick={addEvent}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-bold shadow transform hover:-translate-y-0.5 transition-all duration-150 text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
                 >
                   Add +
                 </button>
@@ -231,24 +241,29 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
                     Your Plans:
                   </h3>
                   <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 py-1">
-                    {Object.entries(events).map(([date, evArr]) =>
-                      evArr.map((ev, i) => (
-                        <div
-                          key={`${date}-${i}`}
-                          className="flex flex-col px-3 py-2 rounded-lg bg-gradient-to-r from-gray-50 to-white border border-gray-100 shadow-sm hover:shadow transition-all"
-                        >
-                          <span className="text-xs font-bold text-gray-700">{date}</span>
-                          <span
-                            className={twMerge(
-                              "mt-1 text-xs px-3 py-1.5 rounded-full font-medium",
-                              ev.color
-                            )}
+                    {Object.entries(events)
+                      .sort(
+                        ([dateA], [dateB]) =>
+                          new Date(dateA).getTime() - new Date(dateB).getTime()
+                      )
+                      .map(([date, evArr]) =>
+                        evArr.map((ev, i) => (
+                          <div
+                            key={`${date}-${i}`}
+                            className="flex flex-col px-3 py-2 rounded-lg bg-gradient-to-r from-gray-50 to-white border border-gray-100 shadow-sm hover:shadow transition-all"
                           >
-                            {ev.text}
-                          </span>
-                        </div>
-                      ))
-                    )}
+                            <span className="text-xs font-bold text-gray-700">{date}</span>
+                            <span
+                              className={twMerge(
+                                "mt-1 text-xs px-3 py-1.5 rounded-full font-medium",
+                                ev.color
+                              )}
+                            >
+                              {ev.text}
+                            </span>
+                          </div>
+                        ))
+                      )}
                   </div>
                 </div>
               ) : (
@@ -260,9 +275,6 @@ export default function CalendarModal({ isOpen, setIsOpen }) {
               )}
             </div>
           </div>
-
-          {/* Bottom stripe */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-300 via-rose-300 to-blue-300 rounded-b-3xl" />
         </Dialog.Panel>
       </div>
     </Dialog>

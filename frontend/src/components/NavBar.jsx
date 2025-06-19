@@ -10,15 +10,22 @@ import {
   FaUserCircle,
   FaSignOutAlt,
   FaCalendarAlt,
+  FaTasks,
 } from "react-icons/fa";
 import { useAuthStore } from "@/store/useAuthStore";
 import CalendarModal from "@/components/CalendarModal";
+import TodoList from "@/components/TodoList"; // ✅ Import the TodoList
 import { useState } from "react";
+import { Dialog } from "@headlessui/react";
+import { useTripStore } from "@/store/useTripStore"; // ✅ To get current trip
 
 export default function Navbar() {
   const { authUser, logout } = useAuthStore();
   const navigate = useNavigate();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isTodoOpen, setIsTodoOpen] = useState(false); // ✅ New state
+
+  const { trip } = useTripStore(); // ✅ Get current trip
 
   const handleLogout = () => {
     logout();
@@ -63,7 +70,7 @@ export default function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Actions: Calendar, Profile, Logout */}
+        {/* Actions */}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setIsCalendarOpen(true)}
@@ -71,6 +78,14 @@ export default function Navbar() {
             title="Planner"
           >
             <FaCalendarAlt className="text-xl" />
+          </button>
+
+          <button
+            onClick={() => setIsTodoOpen(true)}
+            className="text-gray-500 hover:text-indigo-600 transition"
+            title="Todos"
+          >
+            <FaTasks className="text-xl" />
           </button>
 
           <NavLink to="/profile" className="hover:scale-105 transition">
@@ -89,10 +104,30 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <CalendarModal
-        isOpen={isCalendarOpen}
-        setIsOpen={setIsCalendarOpen}
-      />
+      <CalendarModal isOpen={isCalendarOpen} setIsOpen={setIsCalendarOpen} />
+
+      {/* ✅ Todo Modal */}
+      <Dialog open={isTodoOpen} onClose={() => setIsTodoOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="bg-white w-full max-w-md rounded-xl p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <Dialog.Title className="text-xl font-semibold text-gray-800">📝 Trip Todos</Dialog.Title>
+              <button
+                onClick={() => setIsTodoOpen(false)}
+                className="text-gray-500 hover:text-red-500 text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            {trip ? (
+              <TodoList tripId={trip._id} />
+            ) : (
+              <p className="text-sm text-gray-500">Select or open a trip first.</p>
+            )}
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </>
   );
 }

@@ -1,6 +1,6 @@
 // src/store/useTripStore.js
 import { create } from 'zustand';
-import { axiosInstance } from '../utils/axiosInstance';
+import { axiosInstance } from '../api'; // Adjust the import path as necessary
 
 export const useTripStore = create((set, get) => ({
   trip: null,

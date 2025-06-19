@@ -1,35 +1,52 @@
 const Expense = require('../models/Expense');
+const Trip = require('../models/Trip');
 
 exports.addExpense = async (req, res) => {
-  const { title, amount, paidBy, sharedWith } = req.body;
-  const { tripId } = req.params;
-
-  const splitAmount = amount / sharedWith.length;
-  const splitAmounts = sharedWith.map(userId => ({
-    user: userId,
-    amount: splitAmount
-  }));
-
-  const expense = new Expense({
-    trip: tripId,
-    title,
-    amount,
-    paidBy,
-    sharedWith,
-    splitAmounts
-  });
-
+  const { description, amount, paidBy, splits } = req.body;
+  const expense = new Expense({ tripId: req.params.tripId, description, amount, paidBy, splits });
   await expense.save();
-  res.status(201).json({ msg: "Expense added successfully", expense });
+  res.status(201).json(expense);
 };
 
-exports.getTripExpenses = async (req, res) => {
-  const { tripId } = req.params;
-
-  const expenses = await Expense.find({ trip: tripId })
-    .populate('paidBy', 'name')
-    .populate('sharedWith', 'name')
-    .populate('splitAmounts.user', 'name');
-
+exports.getExpenses = async (req, res) => {
+  const expenses = await Expense.find({ tripId: req.params.tripId }).populate('paidBy').populate('splits.user');
   res.json(expenses);
+};
+
+exports.updateExpense = async (req, res) => {
+  const { description, amount, paidBy, splits } = req.body;
+  const expense = await Expense.findById(req.params.expenseId);
+  if (!expense) return res.status(404).json({ msg: 'Expense not found' });
+
+  expense.description = description;
+  expense.amount = amount;
+  expense.paidBy = paidBy;
+  expense.splits = splits;
+  await expense.save();
+  res.json(expense);
+};
+
+exports.deleteExpense = async (req, res) => {
+  const expense = await Expense.findById(req.params.expenseId);
+  if (!expense) return res.status(404).json({ msg: 'Expense not found' });
+
+  await expense.deleteOne();
+  res.json({ msg: 'Expense deleted successfully' });
+};
+
+exports.settleUp = async (req, res) => {
+  const expenses = await Expense.find({ tripId: req.params.tripId });
+  const balances = {};
+
+  expenses.forEach(exp => {
+    const payer = exp.paidBy.toString();
+    balances[payer] = (balances[payer] || 0) + exp.amount;
+
+    exp.splits.forEach(s => {
+      balances[s.user.toString()] = (balances[s.user.toString()] || 0) - s.share;
+    });
+  });
+
+  const summary = Object.entries(balances).map(([user, balance]) => ({ user, balance }));
+  res.json({ summary });
 };

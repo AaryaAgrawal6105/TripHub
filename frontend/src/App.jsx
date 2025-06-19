@@ -14,6 +14,7 @@ import HomeNavbar from './components/HomeNavBar';
 import About from './pages/About';
 import Footer from './components/Footer';
 import BlogPage from './pages/BlogPage';
+import TripExpenses from './pages/TripExpenses';
 
 function App() {
   const location = useLocation(); // 👈 Hook to get current route path
@@ -46,6 +47,7 @@ useEffect(() => {
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/about" element={<About />} />
+        <Route path='/expenses' element={<TripExpenses />} />
       </Routes>
 
       {!hideNavbar && <Footer />}

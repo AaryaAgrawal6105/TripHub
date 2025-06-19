@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Home from './pages/Home';
 import About from './pages/About';
 import BlogPage from './pages/BlogPage';
+import TripExpenses from './pages/TripExpenses';
 import CreateTrip from './pages/CreateTrip'; 
 import TripDetails from "./pages/TripDetails";
 
@@ -48,6 +49,7 @@ function App() {
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
         <Route path="/about" element={<About />} />
+        <Route path='/expenses' element={<TripExpenses />} />
 
         {/* Protected Routes */}
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />

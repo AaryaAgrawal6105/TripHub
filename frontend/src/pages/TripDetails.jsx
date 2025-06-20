@@ -71,17 +71,24 @@ const TripDetails = () => {
           )}
         </div>
 
-        {/* Expenses Button */}
-        <div className="mt-6">
+        {/* Actions */}
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => navigate(`/trip/${trip._id}/expenses`)}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
           >
             Manage Expenses 💰
           </button>
+
+          <button
+            onClick={() => navigate(`/trip/${trip._id}/itinerary`)}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+          >
+            View & Manage Itinerary 🗓️
+          </button>
         </div>
 
-        {/* Send Invite Form - Only if current user is creator */}
+        {/* Send Invite Form */}
         {authUser && authUser._id === trip.createdBy && (
           <div className="mt-8 border-t pt-4">
             <h3 className="font-semibold text-lg text-gray-800 mb-2">Invite a Friend via Email:</h3>

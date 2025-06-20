@@ -5,33 +5,28 @@ import { useParams } from 'react-router-dom';
 export default function TripExpenses() {
   const { tripId } = useParams();
   const [expenses, setExpenses] = useState([]);
-  const [editingExpense, setEditingExpense] = useState(null);
-  const [form, setForm] = useState({ description: '', amount: '', paidBy: '', splits: [] });
-  const [settleSummary, setSettleSummary] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [form, setForm] = useState({ title: '', amount: '', paidBy: '', splitAmounts: [] });
 
   const fetchExpenses = async () => {
     const res = await axiosInstance.get(`/expenses/${tripId}`);
     setExpenses(res.data);
   };
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
-  const handleEdit = (expense) => {
-    setEditingExpense(expense._id);
-    setForm({
-      description: expense.description,
-      amount: expense.amount,
-      paidBy: expense.paidBy._id,
-      splits: expense.splits.map(s => ({ user: s.user._id, share: s.share })),
-    });
+  const fetchTrip = async () => {
+    const res = await axiosInstance.get(`/trips/${tripId}`);
+    setMembers(res.data.members);
   };
 
-  const handleUpdate = async () => {
-    await axiosInstance.put(`/expenses/${editingExpense}`, form);
+  useEffect(() => {
     fetchExpenses();
-    setEditingExpense(null);
+    fetchTrip();
+  }, []);
+
+  const handleAddExpense = async () => {
+    await axiosInstance.post(`/expenses/${tripId}`, form);
+    fetchExpenses();
+    setForm({ title: '', amount: '', paidBy: '', splitAmounts: [] });
   };
 
   const handleDelete = async (id) => {
@@ -39,66 +34,102 @@ export default function TripExpenses() {
     fetchExpenses();
   };
 
-  const handleSettleUp = async () => {
-    const res = await axiosInstance.post(`/expenses/settle/${tripId}`);
-    setSettleSummary(res.data.summary);
+  const handleSplitChange = (index, field, value) => {
+    const updated = [...form.splitAmounts];
+    updated[index][field] = value;
+    setForm({ ...form, splitAmounts: updated });
+  };
+
+  const addSplit = () => {
+    setForm({ ...form, splitAmounts: [...form.splitAmounts, { user: '', amount: '' }] });
+  };
+
+  const removeSplit = (index) => {
+    const updated = [...form.splitAmounts];
+    updated.splice(index, 1);
+    setForm({ ...form, splitAmounts: updated });
+  };
+
+  const handleSettle = async () => {
+    await axiosInstance.post(`/expenses/settle/${tripId}`);
+    fetchExpenses();
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Expenses</h2>
-      {expenses.map(exp => (
-        <div key={exp._id} className="border p-3 rounded mb-2 bg-white shadow-sm">
-          <p><strong>{exp.description}</strong> - ₹{exp.amount} <span className="text-sm text-gray-500">Paid by {exp.paidBy.name}</span></p>
-          <ul className="text-sm text-gray-700 ml-4">
-            {exp.splits.map((s, i) => <li key={i}>{s.user.name} owes ₹{s.share}</li>)}
-          </ul>
-          <div className="mt-2 flex gap-2">
-            <button onClick={() => handleEdit(exp)} className="text-blue-500 text-sm">Edit</button>
-            <button onClick={() => handleDelete(exp._id)} className="text-red-500 text-sm">Delete</button>
-          </div>
+    <div className="max-w-3xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Trip Expenses</h2>
+
+      {/* Add Expense Form */}
+      <div className="bg-white shadow p-4 rounded mb-6 space-y-3">
+        <input
+          placeholder="Title"
+          className="border p-2 w-full"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          className="border p-2 w-full"
+          value={form.amount}
+          onChange={(e) => setForm({ ...form, amount: e.target.value })}
+        />
+
+        <select
+          className="border p-2 w-full"
+          value={form.paidBy}
+          onChange={(e) => setForm({ ...form, paidBy: e.target.value })}
+        >
+          <option value="">Paid By</option>
+          {members.map((m) => (
+            <option key={m._id} value={m._id}>{m.name}</option>
+          ))}
+        </select>
+
+        <div>
+          <h4 className="font-semibold mt-2">Split With:</h4>
+          {form.splitAmounts.map((s, i) => (
+            <div key={i} className="flex gap-2 my-2">
+              <select
+                className="border p-2 w-1/2"
+                value={s.user}
+                onChange={(e) => handleSplitChange(i, 'user', e.target.value)}
+              >
+                <option value="">Member</option>
+                {members.map((m) => (
+                  <option key={m._id} value={m._id}>{m.name}</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                className="border p-2 w-1/3"
+                placeholder="Amount"
+                value={s.amount}
+                onChange={(e) => handleSplitChange(i, 'amount', e.target.value)}
+              />
+              <button onClick={() => removeSplit(i)} className="text-red-500">✕</button>
+            </div>
+          ))}
+          <button onClick={addSplit} className="text-blue-600 text-sm">+ Add Split</button>
         </div>
-      ))}
 
-      {editingExpense && (
-        <div className="p-4 border rounded bg-gray-50 mt-4">
-          <input
-            className="border p-2 w-full mb-2"
-            placeholder="Description"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          <input
-            className="border p-2 w-full mb-2"
-            type="number"
-            placeholder="Amount"
-            value={form.amount}
-            onChange={(e) => setForm({ ...form, amount: e.target.value })}
-          />
-          {/* Add dropdowns for paidBy and splits as needed */}
-          <button onClick={handleUpdate} className="bg-blue-600 text-white px-4 py-1 rounded">Update</button>
-        </div>
-      )}
+        <button onClick={handleAddExpense} className="bg-blue-600 text-white px-4 py-2 rounded">Add Expense</button>
+        <button onClick={handleSettle} className="bg-red-600 text-white px-4 py-2 rounded">Settle All</button>
+      </div>
 
-      <button
-        onClick={handleSettleUp}
-        className="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-      >
-        Settle Up
-      </button>
-
-      {settleSummary.length > 0 && (
-        <div className="mt-4 bg-white p-4 rounded shadow">
-          <h3 className="font-bold text-lg mb-2">Settlement Summary</h3>
-          <ul>
-            {settleSummary.map((s, i) => (
-              <li key={i}>
-                User: {s.user} → Balance: ₹{s.balance}
-              </li>
+      {/* Expense List */}
+      {expenses.map((e) => (
+        <div key={e._id} className="bg-gray-100 rounded p-3 mb-3 shadow">
+          <h4 className="font-bold">{e.title} - ₹{e.amount}</h4>
+          <p className="text-sm text-gray-700">Paid by: {e.paidBy.name}</p>
+          <ul className="text-sm mt-2">
+            {e.splitAmounts.map((s, i) => (
+              <li key={i}>{s.user.name} owes ₹{s.amount}</li>
             ))}
           </ul>
+          <button onClick={() => handleDelete(e._id)} className="text-red-500 mt-1 text-sm">Delete</button>
         </div>
-      )}
+      ))}
     </div>
   );
 }

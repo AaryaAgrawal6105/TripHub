@@ -28,32 +28,33 @@ const getUserTrips = async (req,res) => {
     }
 };
 
-const joinTrip = async (req,res) => {
+// controllers/tripController.js
+const joinTrip = async (req, res) => {
+  const tripId = req.params.id;  // ✅ FIXED
+  const userId = req.userId;
 
-    const { tripId } = req.body;
-    const userId = req.user.id;
-    //Check again after front end
-    try 
-    {
-        const trip = await Trip.findById(tripId);
-        if (!trip) return res.status(404).json({ msg: 'Trip not found' });
+  console.log("Join Trip Request", { tripId, userId });
 
-        if (trip.members.includes(userId)) 
-        {
-        return res.status(400).json({ msg: 'Already joined' });
-        }
-
-        trip.members.push(userId);
-        await trip.save();
-
-        res.status(200).json({ msg: 'Successfully joined the trip' });
-    } 
-    catch (err) 
-    {
-        console.error(err);
-        res.status(500).json({ msg: 'Error joining trip' });
+  try {
+    const trip = await Trip.findById(tripId);
+    if (!trip) {
+      return res.status(404).json({ msg: 'Trip not found' });
     }
+
+    if (trip.members.includes(userId)) {
+      return res.status(400).json({ msg: 'Already joined' });
+    }
+
+    trip.members.push(userId);
+    await trip.save();
+
+    res.status(200).json({ msg: 'Successfully joined the trip' });
+  } catch (err) {
+    console.error("Join Trip Error:", err);
+    res.status(500).json({ msg: 'Error joining trip' });
+  }
 };
+
 
 const addTodo = async (req, res) => {
   const { id } = req.params;

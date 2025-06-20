@@ -20,4 +20,5 @@ router.delete('/:id/itinerary/:itineraryId', auth, deleteItinerary);
 router.post('/:id/comments', auth, addComment);
 router.delete('/:id/comments/:commentId', auth, deleteComment);
 
+
 module.exports = router;

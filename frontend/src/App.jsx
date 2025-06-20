@@ -20,6 +20,8 @@ import BlogPage from './pages/BlogPage';
 import TripExpenses from './pages/TripExpenses';
 import CreateTrip from './pages/CreateTrip'; 
 import TripDetails from "./pages/TripDetails";
+import AcceptInvite from './pages/AcceptInvite';
+import JoinTrip from './pages/JoinTrip';
 
 function App() {
   const location = useLocation();
@@ -50,12 +52,15 @@ function App() {
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
         <Route path="/about" element={<About />} />
         <Route path='/expenses' element={<TripExpenses />} />
+        <Route path="/invite" element={<AcceptInvite />} />
 
         {/* Protected Routes */}
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/create-trip" element={authUser ? <CreateTrip /> : <Navigate to="/login" />} />
         <Route path="/trip/:id" element={authUser ? <TripDetails /> : <Navigate to="/login" />} />
+        <Route path="/trip/:tripId/expenses" element={<TripExpenses />} />
+        <Route path="/trip/:id/join" element={authUser ? <JoinTrip /> : <Navigate to="/login" />} />
       </Routes>
 
       {!hideNavbar && <Footer />}

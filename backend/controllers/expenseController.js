@@ -2,51 +2,67 @@ const Expense = require('../models/Expense');
 const Trip = require('../models/Trip');
 
 exports.addExpense = async (req, res) => {
-  const { description, amount, paidBy, splits } = req.body;
-  const expense = new Expense({ tripId: req.params.tripId, description, amount, paidBy, splits });
-  await expense.save();
-  res.status(201).json(expense);
+  try {
+    const { title, amount, paidBy, splitAmounts } = req.body;
+    const { tripId } = req.params;
+
+    const expense = await Expense.create({
+      trip: tripId,
+      title,
+      amount,
+      paidBy,
+      splitAmounts,
+    });
+
+    res.status(201).json(expense);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };
 
 exports.getExpenses = async (req, res) => {
-  const expenses = await Expense.find({ tripId: req.params.tripId }).populate('paidBy').populate('splits.user');
-  res.json(expenses);
+  try {
+    const { tripId } = req.params;
+    const expenses = await Expense.find({ trip: tripId })
+      .populate('paidBy', 'name')
+      .populate('splitAmounts.user', 'name');
+    res.json(expenses);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };
 
 exports.updateExpense = async (req, res) => {
-  const { description, amount, paidBy, splits } = req.body;
-  const expense = await Expense.findById(req.params.expenseId);
-  if (!expense) return res.status(404).json({ msg: 'Expense not found' });
+  try {
+    const { title, amount, paidBy, splitAmounts } = req.body;
+    const { expenseId } = req.params;
 
-  expense.description = description;
-  expense.amount = amount;
-  expense.paidBy = paidBy;
-  expense.splits = splits;
-  await expense.save();
-  res.json(expense);
+    const updated = await Expense.findByIdAndUpdate(
+      expenseId,
+      { title, amount, paidBy, splitAmounts },
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };
 
 exports.deleteExpense = async (req, res) => {
-  const expense = await Expense.findById(req.params.expenseId);
-  if (!expense) return res.status(404).json({ msg: 'Expense not found' });
-
-  await expense.deleteOne();
-  res.json({ msg: 'Expense deleted successfully' });
+  try {
+    await Expense.findByIdAndDelete(req.params.expenseId);
+    res.json({ msg: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };
 
 exports.settleUp = async (req, res) => {
-  const expenses = await Expense.find({ tripId: req.params.tripId });
-  const balances = {};
-
-  expenses.forEach(exp => {
-    const payer = exp.paidBy.toString();
-    balances[payer] = (balances[payer] || 0) + exp.amount;
-
-    exp.splits.forEach(s => {
-      balances[s.user.toString()] = (balances[s.user.toString()] || 0) - s.share;
-    });
-  });
-
-  const summary = Object.entries(balances).map(([user, balance]) => ({ user, balance }));
-  res.json({ summary });
+  try {
+    const { tripId } = req.params;
+    await Expense.deleteMany({ trip: tripId });
+    res.json({ msg: 'All expenses settled!' });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };

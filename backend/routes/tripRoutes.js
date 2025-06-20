@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment} = require('../controllers/tripController');
+const {getTripById, createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment} = require('../controllers/tripController');
 const auth = require('../middleware/authMiddleware');
 
 router.post('/', auth, createTrip);
 router.get('/', auth, getUserTrips);
 router.post('/:id/join', auth, joinTrip);
+router.get('/:id', auth, getTripById);
 
 router.post('/:id/todos', auth, addTodo);
 router.patch('/:id/todos/:todoId', auth, toggleTodo);

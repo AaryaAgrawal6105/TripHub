@@ -13,17 +13,17 @@ const JoinTrip = () => {
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchTrip = async () => {
-    try {
-      const res = await axiosInstance.get("/trips");
-      const myTrip = res.data.find((t) => t._id === tripId);
-      if (myTrip) setTrip(myTrip);
-    } catch (err) {
-      toast.error("Failed to load trip info");
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchTrip = async () => {
+  try {
+    const res = await axiosInstance.get(`/trips/${tripId}`);
+    setTrip(res.data);
+  } catch (err) {
+    toast.error("Failed to load trip info");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchTrip();

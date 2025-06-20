@@ -46,32 +46,50 @@ addTodo: async (tripId, task) => {
   }
 },
 
-  toggleTodo: async (tripId, todoId) => {
-    if (!tripId || !todoId) return;
-    try {
-      const res = await axiosInstance.patch(`/trips/${tripId}/todos/${todoId}`);
-      const updatedTodo = res.data;
+ toggleTodo: async (tripId, todoId) => {
+  try {
+    const res = await axiosInstance.patch(`/trips/${tripId}/todos/${todoId}`);
+    const updatedTodo = res.data;
 
-      const currentTrip = get().trip;
-      const updatedTodos = (currentTrip?.todos || []).map((todo) =>
-        todo._id === todoId ? updatedTodo : todo
-      );
-
-      get().setTrip({ ...currentTrip, todos: updatedTodos });
-    } catch (err) {
-      console.error('Error toggling todo:', err);
+    if (!updatedTodo || !updatedTodo._id) {
+      console.warn('Invalid todo returned from toggle API');
+      return;
     }
-  },
 
-  deleteTodo: async (tripId, todoId) => {
-    if (!tripId || !todoId) return;
-    try {
-      await axiosInstance.delete(`/trips/${tripId}/todos/${todoId}`);
-      const currentTrip = get().trip;
-      const updatedTodos = (currentTrip?.todos || []).filter((todo) => todo._id !== todoId);
-      get().setTrip({ ...currentTrip, todos: updatedTodos });
-    } catch (err) {
-      console.error('Error deleting todo:', err);
-    }
-  },
+    const currentTrip = get().trip;
+    const updatedTodos = (currentTrip?.todos || []).map((todo) =>
+      todo._id === todoId ? updatedTodo : todo
+    );
+
+    const updatedTrip = {
+      ...currentTrip,
+      todos: updatedTodos,
+    };
+
+    get().setTrip(updatedTrip);
+  } catch (err) {
+    console.error('Error toggling todo:', err);
+  }
+},
+
+deleteTodo: async (tripId, todoId) => {
+  try {
+    const res = await axiosInstance.delete(`/trips/${tripId}/todos/${todoId}`);
+    const currentTrip = get().trip;
+
+    const updatedTodos = (currentTrip?.todos || []).filter(
+      (todo) => todo._id !== todoId
+    );
+
+    const updatedTrip = {
+      ...currentTrip,
+      todos: updatedTodos,
+    };
+
+    get().setTrip(updatedTrip);
+  } catch (err) {
+    console.error('Error deleting todo:', err);
+  }
+},
+
 }));

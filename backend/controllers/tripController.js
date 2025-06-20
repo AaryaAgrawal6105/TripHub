@@ -76,25 +76,46 @@ const addTodo = async (req, res) => {
   }
 };
 
-const toggleTodo = async (req,res) => {
-    const trip = await Trip.findById(req.params.id);
-    const todo = trip.todos.id(req.params.todoId);
-    if(!todo)
-    {
-        return res.status(404).json({msg: 'Todo not found'})
-    }
+const toggleTodo = async (req, res) => {
+  const { id: tripId, todoId } = req.params;
+
+  try {
+    const trip = await Trip.findById(tripId);
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
+
+    const todo = trip.todos.id(todoId); // Access by subdocument ID
+    if (!todo) return res.status(404).json({ message: 'Todo not found' });
 
     todo.done = !todo.done;
     await trip.save();
-    res.json(trip.done);
+
+    res.status(200).json(todo);
+  } catch (err) {
+    console.error('Error toggling todo:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+const deleteTodo = async (req, res) => {
+  const { id: tripId, todoId } = req.params;
+
+  try {
+    const trip = await Trip.findById(tripId);
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
+
+    const todo = trip.todos.id(todoId);
+    if (!todo) return res.status(404).json({ message: 'Todo not found' });
+
+    todo.deleteOne(); // or todo.remove() if using Mongoose <6
+    await trip.save();
+
+    res.status(200).json({ message: 'Todo deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting todo:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
-const deleteTodo = async (req,res) => {
-    const trip = await Trip.findById(req.params.id);
-    trip.todos = trip.todos.filter(t => t._id.toString() !== req.params.todoId);
-    await trip.save();
-    res.json(trip.todos);
-};
+
 
 const addBudget = async (req,res) => {
     const {description, amount} = req.body;

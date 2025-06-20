@@ -143,20 +143,49 @@ const deleteBudget = async (req,res) => {
     res.json(trip.budget);
 };
 
-const addItinerary  = async (req,res) => {
-    const {day, title, description} = req.body;
-    const trip = await Trip.findById(req.params.id);
-    trip.itinerary.push({day, title, description});
-    await trip.save();
-    res.json(trip.itinerary);
-}
+// Add itinerary item
+const addItinerary = async (req, res) => {
+  const {
+    day,
+    date,
+    timeOfDay,
+    exactTime,
+    activity,
+    location,
+    accommodation,
+    transportation,
+    notes
+  } = req.body;
 
-const deleteItinerary = async (req,res) => {
-    const trip = await Trip.findById(req.params.id);
-    trip.itinerary = trip.itinerary.filter(i => i._id.toString() !== req.params.itineraryId);
-    await trip.save();
-    res.json(trip.itinerary);
+  const trip = await Trip.findById(req.params.id);
+  if (!trip) return res.status(404).json({ msg: "Trip not found" });
+
+  trip.itinerary.push({
+    day,
+    date,
+    timeOfDay,
+    exactTime,
+    activity,
+    location,
+    accommodation,
+    transportation,
+    notes
+  });
+
+  await trip.save();
+  res.json(trip.itinerary);
 };
+
+
+const deleteItinerary = async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
+  trip.itinerary = trip.itinerary.filter(
+    (item) => item._id.toString() !== req.params.itineraryId
+  );
+  await trip.save();
+  res.json(trip.itinerary);
+};
+
 
 const addComment = async (req,res) => {
     const {comment} = req.body;

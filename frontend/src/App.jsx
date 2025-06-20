@@ -22,6 +22,7 @@ import CreateTrip from './pages/CreateTrip';
 import TripDetails from "./pages/TripDetails";
 import AcceptInvite from './pages/AcceptInvite';
 import JoinTrip from './pages/JoinTrip';
+import TripItinerary from './pages/TripItinerary';
 
 function App() {
   const location = useLocation();
@@ -61,6 +62,7 @@ function App() {
         <Route path="/trip/:id" element={authUser ? <TripDetails /> : <Navigate to="/login" />} />
         <Route path="/trip/:tripId/expenses" element={<TripExpenses />} />
         <Route path="/trip/:id/join" element={authUser ? <JoinTrip /> : <Navigate to="/login" />} />
+        <Route path="/trip/:id/itinerary" element={authUser ? <TripItinerary /> : <Navigate to="/login" />} />
       </Routes>
 
       {!hideNavbar && <Footer />}

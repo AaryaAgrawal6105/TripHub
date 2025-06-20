@@ -8,6 +8,18 @@ const todoSchema = new mongoose.Schema(
   { _id: true } // ✅ ensure _id is included for each todo
 );
 
+const itinerarySchema = new mongoose.Schema({
+    day: Number,
+    date: Date,
+    timeOfDay: { type: String, enum: ['Morning', 'Afternoon', 'Evening', 'Night'] },
+    exactTime: String,
+    activity: String,
+    location: String,
+    accommodation: String,
+    transportation: String,
+    notes: String
+});
+
 const tripSchema = new mongoose.Schema({
   name: String,
   destination: String,
@@ -17,7 +29,7 @@ const tripSchema = new mongoose.Schema({
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   todos: [todoSchema], // ✅ use embedded sub-schema
   budget: [{ description: String, amount: Number }],
-  itinerary: [{ day: Number, title: String, description: String }],
+  itinerary: [itinerarySchema],
   comments: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

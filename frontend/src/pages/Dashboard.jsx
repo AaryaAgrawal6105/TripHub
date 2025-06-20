@@ -25,12 +25,12 @@ const Dashboard = () => {
   }, []);
 
   const handleCardClick = (trip) => {
-    setTrip(trip);             // 🧠 Store in Zustand
+    setTrip(trip);
     navigate(`/trip/${trip._id}`);
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4">
+    <div className="max-w-6xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-blue-600">Your Trips</h1>
         <button
@@ -42,22 +42,28 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {trips.map((trip) => (
-          <div
-            key={trip._id}
-            onClick={() => handleCardClick(trip)}
-            className="cursor-pointer bg-white border rounded-lg shadow hover:shadow-md transition-all p-4"
-          >
-            <h3 className="text-xl font-semibold text-gray-800">{trip.name}</h3>
-            <p className="text-sm text-gray-600">Destination: {trip.destination}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              {new Date(trip.startDate).toLocaleDateString()} -{" "}
-              {new Date(trip.endDate).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-      </div>
+      {trips.length === 0 ? (
+        <p className="text-gray-500">No trips yet. Create your first one!</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {trips.map((trip) => (
+            <div
+              key={trip._id}
+              onClick={() => handleCardClick(trip)}
+              className="cursor-pointer bg-white border rounded-lg shadow hover:shadow-md transition-all p-4"
+            >
+              <h3 className="text-xl font-semibold text-gray-800">{trip.name}</h3>
+              <p className="text-sm text-gray-600">
+                Destination: {trip.destination}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {new Date(trip.startDate).toLocaleDateString()} -{" "}
+                {new Date(trip.endDate).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

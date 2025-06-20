@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTripStore } from "@/store/useTripStore";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "@/api";
-import { toast } from "react-toastify";
 
 const TripDetails = () => {
+  const { tripId } = useParams();
   const trip = useTripStore((state) => state.trip);
-  const { authUser } = useAuthStore();
-  const [inviteEmail, setInviteEmail] = useState("");
-  const navigate = useNavigate();
 
   if (!trip) {
     return (
       <div className="text-center mt-20 text-gray-600 font-medium">
-        No trip selected. Please go back to Dashboard.
+        Loading trip details...
       </div>
     );
   }
@@ -52,7 +46,6 @@ const TripDetails = () => {
           {trip.members?.length || 1}
         </p>
 
-        {/* TODOS Section */}
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Todos:</h3>
           {trip.todos.length === 0 ? (
@@ -70,38 +63,6 @@ const TripDetails = () => {
             </ul>
           )}
         </div>
-
-        {/* Expenses Button */}
-        <div className="mt-6">
-          <button
-            onClick={() => navigate(`/trip/${trip._id}/expenses`)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          >
-            Manage Expenses 💰
-          </button>
-        </div>
-
-        {/* Send Invite Form - Only if current user is creator */}
-        {authUser && authUser._id === trip.createdBy && (
-          <div className="mt-8 border-t pt-4">
-            <h3 className="font-semibold text-lg text-gray-800 mb-2">Invite a Friend via Email:</h3>
-            <div className="flex gap-2 items-center">
-              <input
-                type="email"
-                className="border p-2 rounded w-full"
-                placeholder="Enter email to invite"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-              />
-              <button
-                onClick={sendInvite}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-              >
-                Send Invite
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

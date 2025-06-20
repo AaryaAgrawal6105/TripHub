@@ -7,9 +7,9 @@ const TodoList = ({ tripId }) => {
   const { trip, addTodo, toggleTodo, deleteTodo } = useTripStore();
   const [newTask, setNewTask] = useState('');
 
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (newTask.trim()) {
-      addTodo(tripId, newTask);
+      await addTodo(tripId, newTask);
       setNewTask('');
     }
   };
@@ -37,29 +37,30 @@ const TodoList = ({ tripId }) => {
 
       {trip?.todos?.length ? (
         <ul className="space-y-2">
-          {trip.todos.map((todo) => (
-            <li
-              key={todo._id}
-              className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
-            >
-              <div
-                className={`flex items-center gap-2 cursor-pointer ${
-                  todo.done ? 'line-through text-gray-400' : ''
-                }`}
-                onClick={() => toggleTodo(tripId, todo._id)}
-              >
-                <CheckIcon
-                  className={`w-5 h-5 ${
-                    todo.done ? 'text-green-500' : 'text-gray-300'
-                  }`}
-                />
-                <span className="text-sm">{todo.task}</span>
-              </div>
-              <button onClick={() => deleteTodo(tripId, todo._id)}>
-                <TrashIcon className="w-4 h-4 text-red-400 hover:text-red-600" />
-              </button>
-            </li>
-          ))}
+          {trip.todos.map((todo) =>
+  todo && todo._id ? (
+    <li
+      key={todo._id}
+      className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
+    >
+      <div
+        className={`flex items-center gap-2 cursor-pointer ${
+          todo.done ? 'line-through text-gray-400' : ''
+        }`}
+        onClick={() => toggleTodo(tripId, todo._id)}
+      >
+        <CheckIcon
+          className={`w-5 h-5 ${todo.done ? 'text-green-500' : 'text-gray-300'}`}
+        />
+        <span className="text-sm">{todo.task}</span>
+      </div>
+      <button onClick={() => deleteTodo(tripId, todo._id)}>
+        <TrashIcon className="w-4 h-4 text-red-400 hover:text-red-600" />
+      </button>
+    </li>
+  ) : null
+)}
+
         </ul>
       ) : (
         <p className="text-sm text-gray-500">No todos yet. Start planning!</p>

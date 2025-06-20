@@ -18,6 +18,8 @@ import TodoList from "@/components/TodoList"; // ✅ Import the TodoList
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { useTripStore } from "@/store/useTripStore"; // ✅ To get current trip
+import TripMap from "@/components/TripMap";
+import MapDropdown from "./MapDropdown";
 
 export default function Navbar() {
   const { authUser, logout } = useAuthStore();
@@ -91,6 +93,7 @@ export default function Navbar() {
           <NavLink to="/profile" className="hover:scale-105 transition">
             <FaUserCircle className="text-xl text-gray-500 hover:text-blue-600" />
           </NavLink>
+          <MapDropdown />
 
           {authUser && (
             <button
@@ -105,6 +108,7 @@ export default function Navbar() {
       </nav>
 
       <CalendarModal isOpen={isCalendarOpen} setIsOpen={setIsCalendarOpen} />
+
 
       {/* ✅ Todo Modal */}
       <Dialog open={isTodoOpen} onClose={() => setIsTodoOpen(false)} className="relative z-50">

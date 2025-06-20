@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet-defaulticon-compatibility';
+@import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+
 /* In your main index.css or App.css */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

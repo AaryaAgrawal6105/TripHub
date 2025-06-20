@@ -55,16 +55,25 @@ const joinTrip = async (req,res) => {
     }
 };
 
-const addTodo = async (req,res) => {
-    const {task} = req.body;
-    const trip = await Trip.findById(req.params.id);
-    if(!trip)
-    {
-        return res.status(404).json({msg: 'Trip not found'});
-    }
-    trip.todos.push({task, done: false});
+const addTodo = async (req, res) => {
+  const { id } = req.params;
+  const { task } = req.body;
+
+  try {
+    const trip = await Trip.findById(id);
+    if (!trip) return res.status(404).json({ message: "Trip not found" });
+
+    const newTodo = { task, done: false };
+    trip.todos.push(newTodo);
     await trip.save();
-    res.json(trip.todos);
+
+    // Send back the newly added todo
+    const addedTodo = trip.todos[trip.todos.length - 1];
+    res.status(201).json(addedTodo); // ✅ this must return the todo
+  } catch (err) {
+    console.error("Failed to add todo:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const toggleTodo = async (req,res) => {

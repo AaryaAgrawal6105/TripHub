@@ -36,7 +36,9 @@ const joinTrip = async (req, res) => {
   console.log("Join Trip Request", { tripId, userId });
 
   try {
+    console.log("Finding trip with ID:", tripId);
     const trip = await Trip.findById(tripId);
+
     if (!trip) {
       return res.status(404).json({ msg: 'Trip not found' });
     }

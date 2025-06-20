@@ -55,6 +55,16 @@ const joinTrip = async (req, res) => {
   }
 };
 
+const getTripById = async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: 'Trip not found' });
+    res.json(trip);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
 
 const addTodo = async (req, res) => {
   const { id } = req.params;
@@ -163,4 +173,4 @@ const deleteComment = async (req,res) => {
     res.json(trip.comments);
 };
 
-module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment};
+module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment, getTripById };

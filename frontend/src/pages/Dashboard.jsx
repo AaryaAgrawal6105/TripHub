@@ -4,6 +4,7 @@ import { axiosInstance } from "@/api";
 import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useTripStore } from "@/store/useTripStore";
+import TripAIAssistant from "@/components/TripAIAssistant";
 
 const Dashboard = () => {
   const [trips, setTrips] = useState([]);
@@ -29,6 +30,7 @@ const Dashboard = () => {
     navigate(`/trip/${trip._id}`);
   };
 
+  
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
@@ -64,6 +66,12 @@ const Dashboard = () => {
           ))}
         </div>
       )}
+
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-6 text-blue-700">Welcome to TripHub 🌍</h1>
+      <TripAIAssistant />
+    </div>
+
     </div>
   );
 };

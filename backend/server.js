@@ -11,6 +11,7 @@ const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 app.use(cors(
@@ -32,6 +33,7 @@ app.use("/api/home/blogs", blogRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`The server is running on port ${process.env.PORT}`)

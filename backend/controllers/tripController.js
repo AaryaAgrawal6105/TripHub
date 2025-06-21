@@ -204,4 +204,48 @@ const deleteComment = async (req,res) => {
     res.json(trip.comments);
 };
 
-module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment, getTripById };
+// GET messages for a trip
+const getMessages = async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id).populate('messages.sender', 'name');
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
+    res.json(trip.messages || []);
+  } catch (err) {
+    console.error('Error fetching messages:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// POST a new message to a trip
+const addMessage = async (req, res) => {
+  const { content } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
+
+    const newMessage = {
+      sender: userId,
+      content,
+      timestamp: new Date(),
+    };
+
+    trip.messages.push(newMessage);
+    await trip.save();
+
+    const populatedTrip = await Trip.findById(req.params.id).populate('messages.sender', 'name');
+    const populatedMessage = populatedTrip.messages.pop(); // get last pushed message
+
+    res.status(201).json(populatedMessage);
+  } catch (err) {
+    console.error('Error saving message:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
+module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment,getMessages,
+  addMessage, deleteComment, getTripById };

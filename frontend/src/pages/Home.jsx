@@ -1,4 +1,5 @@
-import bg from "../assets/bgImage.jpg";
+import bg from "@/assets/bgImage.jpg";
+
 import { useAuthStore } from '../store/useAuthStore'; 
 import { useNavigate } from 'react-router-dom';
 
@@ -21,8 +22,8 @@ const Home = () => {
       className="h-[90vh] bg-cover bg-center relative flex items-center justify-center text-white"
       style={{ backgroundImage: `url(${bg})` }}
     >
-        {console.log(bg)};
-      <div className="bg-black bg-opacity-50 absolute inset-0" />
+    
+      <div className=" bg-opacity-50 absolute inset-0" />
       <div className="relative z-10 text-center max-w-2xl px-4">
         <h1 className="text-5xl font-bold mb-4">Explore. Plan. Travel.</h1>
         <p className="text-lg mb-6">Your all-in-one trip planner for unforgettable journeys</p>

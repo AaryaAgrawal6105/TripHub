@@ -38,7 +38,7 @@ function App() {
 
   const hideNavbar =
     location.pathname === "/login" || location.pathname === "/signup";
-  const showHomeNavbar = location.pathname === "/home";
+  const showHomeNavbar = location.pathname === "/";
 
   return (
     <div className="App">
@@ -50,10 +50,10 @@ function App() {
 
       <Routes>
         {/* Public Routes */}
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/home/blogs" element={<BlogPage />} />
-        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
+        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/dashboard" />} />
+        <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/dashboard" />} />
         <Route path="/about" element={<About />} />
         <Route path='/expenses' element={<TripExpenses />} />
         <Route path="/invite" element={<AcceptInvite />} />
@@ -61,7 +61,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Protected Routes */}  
-        <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/dashboard" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/trips" element={authUser ? <Trips /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/create-trip" element={authUser ? <CreateTrip /> : <Navigate to="/login" />} />

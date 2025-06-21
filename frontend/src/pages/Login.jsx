@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore'; 
 // import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import bg from '../assets/login.jpeg'; // Adjust the path as necessary
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -24,9 +25,9 @@ export default function Login() {
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-white">
       {/* Left Side - Image + Quote */}
       <div className="hidden md:flex flex-col justify-center items-center bg-cover bg-center text-white px-8"
-           style={{ backgroundImage: "url('https://source.unsplash.com/800x600/?travel,nature')" }}>
-        <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">Travelista Tours</h1>
-        <p className="text-center max-w-sm text-lg font-light">Travel is the only purchase that enriches you in ways beyond material wealth.</p>
+           style={{ backgroundImage: `url(${bg})` }}>
+        {/* <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">Travelista Tours</h1>
+        <p className="text-center max-w-sm text-lg font-light">Travel is the only purchase that enriches you in ways beyond material wealth.</p> */}
       </div>
 
       {/* Right Side - Login Form */}

@@ -8,7 +8,7 @@ const Home = () => {
     const { authUser } = useAuthStore();
     const handleStartPlanning = () => {
     if (authUser) {
-      navigate("/"); // or "/dashboard"
+      navigate("/dashboard"); // or "/dashboard"
     } else {
       navigate("/login");
     }

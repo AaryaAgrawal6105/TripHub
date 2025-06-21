@@ -35,7 +35,7 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { name: "Dashboard", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
     { name: "Trips", path: "/trips" },
   ];
 

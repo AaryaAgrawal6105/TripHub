@@ -91,8 +91,18 @@ export default function Navbar() {
           </button>
 
           <NavLink to="/profile" className="hover:scale-105 transition">
-            <FaUserCircle className="text-xl text-gray-500 hover:text-blue-600" />
-          </NavLink>
+  {authUser?.profilePic ? (
+    <img
+      src={authUser.profilePic}
+      alt="Profile"
+      className="w-8 h-8 rounded-full object-cover border border-gray-300 hover:ring-2 hover:ring-blue-500"
+    />
+  ) : (
+    <FaUserCircle className="text-xl text-gray-500 hover:text-blue-600" />
+  )}
+</NavLink>
+
+
           <MapDropdown />
 
           {authUser && (

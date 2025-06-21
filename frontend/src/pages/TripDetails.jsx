@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "@/api";
 import { toast } from "react-toastify";
+import TripChat from "@/components/TripChat"
 
 const TripDetails = () => {
   const trip = useTripStore((state) => state.trip);
@@ -69,6 +70,10 @@ const TripDetails = () => {
               ))}
             </ul>
           )}
+        </div>
+
+        <div>
+          <TripChat />
         </div>
 
         {/* Actions */}

@@ -24,6 +24,8 @@ import AcceptInvite from './pages/AcceptInvite';
 import JoinTrip from './pages/JoinTrip';
 import TripItinerary from './pages/TripItinerary';
 import Trips from './pages/Trips';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const location = useLocation();
@@ -55,8 +57,10 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path='/expenses' element={<TripExpenses />} />
         <Route path="/invite" element={<AcceptInvite />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* Protected Routes */}
+        {/* Protected Routes */}  
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/trips" element={authUser ? <Trips /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />

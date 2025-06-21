@@ -22,12 +22,12 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-white">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gray-100">
       {/* Left Side - Image + Quote */}
       <div className="hidden md:flex flex-col justify-center items-center bg-cover bg-center text-white px-8"
            style={{ backgroundImage: `url(${bg})` }}>
         {/* <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">Travelista Tours</h1>
-        <p className="text-center max-w-sm text-lg font-light">Travel is the only purchase that enriches you in ways beyond material wealth.</p> */}
+        {<p className="text-center max-w-sm text-lg font-light">Travel is the only purchase that enriches you in ways beyond material wealth.</p> */}
       </div>
 
       {/* Right Side - Login Form */}
@@ -55,8 +55,9 @@ export default function Login() {
           </div>
 
           <div className="text-right text-sm text-blue-600 hover:underline cursor-pointer mb-4">
-            Forgot your password?
-          </div>
+          <Link to="/forgot-password">Forgot your password?</Link>
+        </div>
+
 
           <button onClick={handleLogin}
                   className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition mb-4">

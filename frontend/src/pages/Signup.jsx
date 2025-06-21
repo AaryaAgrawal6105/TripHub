@@ -36,7 +36,7 @@ const  Signup = ()=> {
       };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-white">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gray-100">
       {/* Left - Image Section */}
       
       <div className="flex flex-col justify-center items-center text-white px-8 w-full min-h-screen"

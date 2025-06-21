@@ -28,7 +28,8 @@ const itinerarySchema = new mongoose.Schema({
 // Sub-schema for chat messages
 const chatMessageSchema = new mongoose.Schema({
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  text: { type: String, required: true },
+  senderName: String, // 🟢 new field to store name directly
+  text: String,
   timestamp: { type: Date, default: Date.now },
 });
 

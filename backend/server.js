@@ -52,10 +52,11 @@ io.on('connection', (socket) => {
 
   socket.on('send-message', async ({ tripId, userId, text }) => {
     try {
-      const user = await User.findById(userId).select('name'); // fetch user name
+      const user = await User.findById(userId).select('name');
 
       const message = {
         sender: userId,
+        senderName: user.name, // 🟢 save name in DB
         text,
         timestamp: new Date(),
       };
@@ -64,16 +65,9 @@ io.on('connection', (socket) => {
       trip.messages.push(message);
       await trip.save();
 
-      const fullMessage = {
-        sender: {
-          _id: userId,
-          name: user.name,
-        },
-        text,
-        timestamp: message.timestamp,
-      };
-
-      io.to(tripId).emit('receive-message', fullMessage);
+      io.to(tripId).emit('receive-message', {
+        ...message,
+      });
     } catch (err) {
       console.error('Error sending message:', err.message);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import ProfilePicture from "../components/ProfilePicture";
 
 const Profile = () => {
   const { updateProfile, updatePassword } = useAuthStore();
@@ -34,7 +35,18 @@ const Profile = () => {
   };
 
   return (
+
+     
+
+
     <div className="max-w-xl mx-auto my-12 p-6 bg-white shadow-md rounded-lg">
+
+     
+      <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Profile</h2>
+
+      <ProfilePicture /> 
+  
+
       <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Profile</h2>
 
       <div className="space-y-4">

@@ -9,6 +9,8 @@ export const useAuthStore = create(persist(
     isSigningUp: false,
     isLogginIn: false,
 
+    setAuthUser: (user) => set({ authUser: user }),
+
     checkAuth: async () => {
       const token = localStorage.getItem('authToken');
       if (!token) return set({ authUser: null });
@@ -93,12 +95,39 @@ export const useAuthStore = create(persist(
         toast.error(err);
       }
     },
+
+    uploadProfilePicture: async (file) => {
+      try {
+        const formData = new FormData();
+        formData.append("profilePic", file);
+
+        const res = await axiosInstance.post("/user/profile-picture", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        set({ authUser: res.data.user });
+        toast.success("Profile picture updated");
+      } catch (err) {
+        toast.error("Failed to upload profile picture");
+      }
+    },
+
+    deleteProfilePicture: async () => {
+      try {
+        const res = await axiosInstance.delete("/user/profile-picture");
+        set({ authUser: res.data.user });
+        toast.success("Profile picture removed");
+      } catch (err) {
+        toast.error("Failed to remove profile picture");
+      }
+    },
   }),
   {
-    name: 'auth-storage', // localStorage key
-    partialize: (state) => ({ authUser: state.authUser }) // only persist authUser
+    name: 'auth-storage',
+    partialize: (state) => ({ authUser: state.authUser }),
   }
 ));
+
 
 
 // import { create } from 'zustand'

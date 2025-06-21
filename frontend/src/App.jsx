@@ -23,6 +23,7 @@ import TripDetails from "./pages/TripDetails";
 import AcceptInvite from './pages/AcceptInvite';
 import JoinTrip from './pages/JoinTrip';
 import TripItinerary from './pages/TripItinerary';
+import Trips from './pages/Trips';
 
 function App() {
   const location = useLocation();
@@ -57,6 +58,7 @@ function App() {
 
         {/* Protected Routes */}
         <Route path="/" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/trips" element={authUser ? <Trips /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
         <Route path="/create-trip" element={authUser ? <CreateTrip /> : <Navigate to="/login" />} />
         <Route path="/trip/:id" element={authUser ? <TripDetails /> : <Navigate to="/login" />} />

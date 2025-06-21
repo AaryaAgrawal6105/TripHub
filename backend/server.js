@@ -4,6 +4,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require("http");
 const { Server } = require("socket.io");
+const Trip = require('./models/Trip');
+const User = require('./models/User'); 
 
 dotenv.config();
 const app = express();
@@ -41,24 +43,38 @@ app.use('/api/events', eventRoutes);
 app.use('/api/expenses', expenseRoutes);
 
 // Real-time Chat Handling
-io.on("connection", (socket) => {
-  console.log("✅ User connected:", socket.id);
-
-  socket.on("joinRoom", (tripId) => {
+io.on('connection', (socket) => {
+  socket.on('join-trip', ({ tripId, userId }) => {
     socket.join(tripId);
-    console.log(`User ${socket.id} joined trip room ${tripId}`);
   });
 
-  socket.on("sendMessage", ({ tripId, message, sender }) => {
-    io.to(tripId).emit("receiveMessage", {
-      message,
-      sender,
-      timestamp: new Date(),
-    });
-  });
+  socket.on('send-message', async ({ tripId, userId, text }) => {
+    try {
+      const user = await User.findById(userId).select('name'); // fetch user name
 
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+      const message = {
+        sender: userId,
+        text,
+        timestamp: new Date(),
+      };
+
+      const trip = await Trip.findById(tripId);
+      trip.messages.push(message);
+      await trip.save();
+
+      const fullMessage = {
+        sender: {
+          _id: userId,
+          name: user.name,
+        },
+        text,
+        timestamp: message.timestamp,
+      };
+
+      io.to(tripId).emit('receive-message', fullMessage);
+    } catch (err) {
+      console.error('Error sending message:', err.message);
+    }
   });
 });
 

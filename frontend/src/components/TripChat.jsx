@@ -1,72 +1,95 @@
-import React, { useEffect, useState, useRef } from "react";
-import { io } from "socket.io-client";
-import { useTripStore } from "@/store/useTripStore";
-import { useAuthStore } from "@/store/useAuthStore";
+// src/components/ChatBox.jsx
+import React, { useEffect, useRef, useState } from 'react';
+import { useChatStore } from '../store/useChatStore';
+import { useAuthStore } from '../store/useAuthStore';
+import { useTripStore } from '../store/useTripStore';
+import { formatDistanceToNow } from 'date-fns';
 
-const socket = io("http://localhost:5000", {
-  withCredentials: true,
-});
-
-const TripChat = () => {
-  const { trip } = useTripStore();
+const ChatBox = () => {
+  const { socket, messages, typingUsers, initSocketListeners, sendMessage, emitTyping, emitStopTyping } = useChatStore();
   const { authUser } = useAuthStore();
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const chatEndRef = useRef(null);
+  const { trip } = useTripStore();
+
+  const [newMessage, setNewMessage] = useState('');
+  const inputRef = useRef();
+  const typingTimeoutRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (trip?._id) {
-      socket.emit("joinRoom", trip._id);
+    if (trip && authUser) {
+      initSocketListeners(trip._id, authUser);
     }
   }, [trip]);
 
   useEffect(() => {
-    socket.on("receiveMessage", (data) => {
-      setMessages((prev) => [...prev, data]);
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, []);
-
-  const sendMessage = () => {
-    if (input.trim()) {
-      socket.emit("sendMessage", {
-        tripId: trip._id,
-        message: input,
-        sender: authUser?.name || "Anonymous",
-      });
-      setInput("");
-    }
-  };
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const handleInput = (e) => {
+    setNewMessage(e.target.value);
+
+    emitTyping(trip._id, authUser);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      emitStopTyping(trip._id, authUser);
+    }, 1000);
+  };
+
+  const handleSend = () => {
+    if (!newMessage.trim()) return;
+    sendMessage(trip._id, {
+      sender: authUser,
+      content: newMessage.trim(),
+      timestamp: new Date().toISOString(),
+    });
+    setNewMessage('');
+    emitStopTyping(trip._id, authUser);
+  };
+
   return (
-    <div className="p-4 border rounded-lg bg-white shadow-md mt-6">
-      <h3 className="text-lg font-bold mb-2">💬 Trip Chat</h3>
-      <div className="h-64 overflow-y-auto border p-3 rounded bg-gray-50">
+    <div className="bg-white shadow rounded-xl p-4 mt-6 max-h-[500px] overflow-y-auto flex flex-col">
+      <h2 className="text-xl font-semibold mb-2 text-blue-600">💬 Group Chat</h2>
+
+      <div className="flex-1 overflow-y-auto space-y-2 mb-3">
         {messages.map((msg, idx) => (
-          <div key={idx} className="mb-2">
-            <strong>{msg.sender}</strong>: {msg.message}
+          <div
+            key={idx}
+            className={`p-2 rounded-md max-w-[75%] ${
+              msg.sender._id === authUser._id ? 'bg-blue-100 self-end' : 'bg-gray-100 self-start'
+            }`}
+          >
+            <div className="text-sm font-medium text-gray-800">
+                {console.log(msg.sender.name)}
+              {msg.sender.name || 'User'}
+            </div>
+            <div className="text-gray-700 text-sm">{msg.text}</div>
+            <div className="text-xs text-gray-400 text-right">
+              {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
+            </div>
           </div>
         ))}
-        <div ref={chatEndRef} />
+        <div ref={messagesEndRef} />
       </div>
-      <div className="flex mt-3 gap-2">
+
+      {typingUsers.length > 0 && (
+        <div className="text-xs text-gray-500 italic mb-2">
+          {typingUsers.join(', ')} typing...
+        </div>
+      )}
+
+      <div className="flex items-center gap-2">
         <input
-          className="flex-1 border px-3 py-2 rounded"
-          placeholder="Type a message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          ref={inputRef}
+          type="text"
+          value={newMessage}
+          onChange={handleInput}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="Type your message..."
+          className="flex-1 px-3 py-2 border rounded-lg text-sm"
         />
         <button
-          onClick={sendMessage}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          onClick={handleSend}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
         >
           Send
         </button>
@@ -75,4 +98,4 @@ const TripChat = () => {
   );
 };
 
-export default TripChat;
+export default ChatBox;

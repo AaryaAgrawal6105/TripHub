@@ -1,4 +1,3 @@
-// === models/Expense.js ===
 const mongoose = require('mongoose');
 
 const expenseSchema = new mongoose.Schema({
@@ -9,10 +8,9 @@ const expenseSchema = new mongoose.Schema({
   splitAmounts: [
     {
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      amount: Number,
-    },
-  ],
-  createdAt: { type: Date, default: Date.now },
-});
+      amount: Number
+    }
+  ]
+}, { timestamps: true });
 
 module.exports = mongoose.model('Expense', expenseSchema);

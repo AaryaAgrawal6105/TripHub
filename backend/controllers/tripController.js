@@ -59,7 +59,8 @@ const joinTrip = async (req, res) => {
 
 const getTripById = async (req, res) => {
   try {
-    const trip = await Trip.findById(req.params.id);
+    const trip = await Trip.findById(req.params.id) .populate('members', 'name') // <-- This line is essential
+      .populate('createdBy', 'name');;
     if (!trip) return res.status(404).json({ msg: 'Trip not found' });
     res.json(trip);
   } catch (err) {

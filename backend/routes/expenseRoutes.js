@@ -3,17 +3,16 @@ const router = express.Router();
 const {
   addExpense,
   getExpenses,
-  updateExpense,
   deleteExpense,
-  settleUp
+  settleUp,
+  getSummary
 } = require('../controllers/expenseController');
-
 const auth = require('../middleware/authMiddleware');
 
 router.post('/:tripId', auth, addExpense);
 router.get('/:tripId', auth, getExpenses);
-router.put('/:expenseId', auth, updateExpense);
 router.delete('/:expenseId', auth, deleteExpense);
 router.post('/settle/:tripId', auth, settleUp);
+router.get('/summary/:tripId', auth, getSummary);
 
 module.exports = router;

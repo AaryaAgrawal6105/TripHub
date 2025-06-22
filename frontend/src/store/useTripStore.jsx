@@ -13,16 +13,20 @@ export const useTripStore = create((set, get) => ({
     localStorage.setItem('selectedTrip', JSON.stringify(normalizedTrip));
     set({ trip: normalizedTrip });
   },
-
-  fetchTripById: async (tripId) => {
-    if (!tripId) return;
-    try {
-      const res = await axiosInstance.get(`/trips/${tripId}`);
+fetchTripById: async (tripId) => {
+  if (!tripId) return;
+  try {
+    const res = await axiosInstance.get(`/trips/${tripId}`);
+    if (res.data && res.data._id) {
       get().setTrip(res.data);
-    } catch (err) {
-      console.error('Failed to fetch trip:', err);
+    } else {
+      console.warn("Invalid trip data returned from backend", res.data);
     }
-  },
+  } catch (err) {
+    console.error('Failed to fetch trip:', err);
+  }
+},
+
 
 addTodo: async (tripId, task) => {
   if (!tripId || !task) return;

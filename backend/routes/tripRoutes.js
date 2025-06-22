@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const {getTripById, createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment, deleteComment} = require('../controllers/tripController');

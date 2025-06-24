@@ -1,144 +1,136 @@
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
-import { FaPlaneDeparture } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+  FaPlaneDeparture,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-blue-950 text-white pt-14 pb-8 px-6 sm:px-12">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer className="relative w-full bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white mt-auto overflow-hidden">
+      {/* Decorative top border */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500"></div>
 
-        {/* Brand Description */}
-        <div className="space-y-4 pr-35">
-          <div className="flex items-center text-2xl font-bold text-white">
-            <FaPlaneDeparture className="text-blue-400 text-3xl mr-2" />
-            TripHub
-          </div>
-          <p className="text-sm text-gray-300 leading-relaxed">
-            Plan, share, and enjoy unforgettable journeys with TripHub
-          </p>
-        </div>
-
-        {/* Quick Links */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Quick Links</h3>
-          <ul className="space-y-2 text-sm text-gray-300">
-            <li><a href="/home" className="hover:text-white">Home</a></li>
-            <li><a href="/about" className="hover:text-white">About Us</a></li>
-            <li><a href="/login" className="hover:text-white">Login</a></li>
-            <li><a href="/signup" className="hover:text-white">Sign Up</a></li>
-          </ul>
-        </div>
-
-        {/* Explore */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Explore</h3>
-          <ul className="space-y-2 text-sm text-gray-300">
-            <li><a href="#" className="hover:text-white">Top Destinations</a></li>
-            <li><a href="#" className="hover:text-white">Budget Planning</a></li>
-            <li><a href="#" className="hover:text-white">Trip Sharing</a></li>
-            <li><a href="#" className="hover:text-white">Smart Recommendations</a></li>
-          </ul>
-        </div>
-
-        {/* Newsletter + Social */}
-        <div className="space-y-5">
-          <h3 className="text-lg font-semibold text-white">Stay Connected</h3>
-          <p className="text-sm text-gray-300">Subscribe to receive the latest travel updates and offers.</p>
-          <div className="flex items-center">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="px-4 py-2 rounded-l-md w-full text-sm text-gray-800 focus:outline-none"
-            />
-            <button className="bg-blue-500 px-4 py-2 rounded-r-md text-sm hover:bg-blue-600">
-              Subscribe
-            </button>
-          </div>
-          <div className="flex gap-4 pt-1 text-white text-lg">
-            <a href="#"><FaFacebookF className="hover:text-blue-400" /></a>
-            <a href="#"><FaTwitter className="hover:text-blue-400" /></a>
-            <a href="#"><FaInstagram className="hover:text-blue-400" /></a>
-            <a href="#"><FaLinkedinIn className="hover:text-blue-400" /></a>
-          </div>
-        </div>
-
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <div className="absolute top-10 left-1/4 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl"></div>
+        <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl"></div>
       </div>
 
-      <hr className="my-10 border-gray-700" />
-      <p className="text-center text-sm text-gray-400">
-        &copy; {new Date().getFullYear()} TripHub. All rights reserved.
-      </p>
+      <div className="relative pt-8 pb-4 px-6 sm:px-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
+
+          {/* Brand Description */}
+          <div className="space-y-3 md:pr-8">
+            <div className="group flex items-center text-2xl font-bold">
+              <div className="relative">
+                <FaPlaneDeparture className="text-blue-400 text-3xl mr-3 transform group-hover:translate-x-1 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-blue-400/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+              <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent font-black text-3xl">
+                TripHub
+              </span>
+            </div>
+            <p className="text-base text-gray-300 leading-relaxed max-w-sm">
+              Plan, share, and enjoy unforgettable journeys with TripHub.
+            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span>Trusted by travelers</span>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold relative">
+              Quick Links
+              <div className="absolute -bottom-2 left-0 w-12 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"></div>
+            </h3>
+            <ul className="space-y-2 text-gray-300">
+              {[
+                ["Home", "/"],
+                ["About Us", "/about"],
+                ["Login", "/login"],
+                ["Sign Up", "/signup"],
+              ].map(([text, link]) => (
+                <li key={text}>
+                  <a
+                    href={link}
+                    className="group flex items-center hover:text-white transition-all duration-300 hover:translate-x-1"
+                  >
+                    <span className="w-0 h-0.5 bg-blue-400 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2 rounded-full"></span>
+                    {text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Explore */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold relative">
+              Explore
+              <div className="absolute -bottom-2 left-0 w-12 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
+            </h3>
+            <ul className="space-y-2 text-gray-300">
+              {[
+                "Top Destinations",
+                "Budget Planning",
+                "Trip Sharing",
+                "Smart Recommendations",
+              ].map((item) => (
+                <li key={item}>
+                  <a
+                    href="#"
+                    className="group flex items-center hover:text-white transition-all duration-300 hover:translate-x-1"
+                  >
+                    <span className="w-0 h-0.5 bg-purple-400 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2 rounded-full"></span>
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Developer & Social */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold relative">
+              Developers
+              <div className="absolute -bottom-2 left-0 w-12 h-0.5 bg-gradient-to-r from-green-400 to-blue-400 rounded-full"></div>
+            </h3>
+
+            <div className="pt-2">
+              <p className="text-sm text-gray-400 mb-4">Follow us on social media</p>
+              <div className="flex gap-4 text-white text-xl">
+                <a
+                  href="#"
+                  className="group relative p-3 bg-white/10 rounded-xl border border-white/20 hover:bg-blue-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-700/25"
+                >
+                  <FaLinkedinIn className="relative z-10" />
+                  <div className="absolute inset-0 bg-blue-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
+                <a
+                  href="#"
+                  className="group relative p-3 bg-white/10 rounded-xl border border-white/20 hover:bg-blue-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-600/25"
+                >
+                  <FaInstagram className="relative z-10" />
+                  <div className="absolute inset-0 bg-blue-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-3 pt-5 border-t border-gray-700/50 text-center">
+          <p className="text-base text-gray-400">
+            &copy; {new Date().getFullYear()} TripHub. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
   );
 };
 
 export default Footer;
-
-
-
-
-// import React from 'react';
-// import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
-
-// const Footer = () => {
-//   return (
-//     <footer className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-12">
-//       <div className="max-w-6xl mx-auto grid md:grid-cols-4 sm:grid-cols-2 gap-8">
-        
-//         {/* Logo & Description */}
-//         <div>
-//           <h1 className="text-2xl font-bold mb-3">TripHub</h1>
-//           <p className="text-sm leading-relaxed">
-//             Your all-in-one travel companion. Plan, organize, and enjoy unforgettable journeys with ease.
-//           </p>
-//         </div>
-
-//         {/* Quick Links */}
-//         <div>
-//           <h2 className="font-semibold mb-3 text-lg">Quick Links</h2>
-//           <ul className="space-y-2 text-sm">
-//             <li><a href="/home" className="hover:underline">Home</a></li>
-//             <li><a href="/about" className="hover:underline">About Us</a></li>
-//             <li><a href="/features" className="hover:underline">Features</a></li>
-//             <li><a href="/contact" className="hover:underline">Contact</a></li>
-//           </ul>
-//         </div>
-
-//         {/* Newsletter */}
-//         <div>
-//           <h2 className="font-semibold mb-3 text-lg">Stay Updated</h2>
-//           <p className="text-sm mb-3">Get travel tips and latest updates directly to your inbox</p>
-//           <form className="flex flex-col space-y-2">
-//             <input
-//               type="email"
-//               placeholder="Your email"
-//               className="px-3 py-2 rounded text-black focus:outline-none"
-//             />
-//             <button
-//               type="submit"
-//               className="bg-white text-blue-700 py-2 rounded hover:bg-blue-100 font-semibold"
-//             >
-//               Subscribe
-//             </button>
-//           </form>
-//         </div>
-
-//         {/* Social Media */}
-//         <div>
-//           <h2 className="font-semibold mb-3 text-lg">Follow Us</h2>
-//           <div className="flex space-x-4 mt-2 text-xl">
-//             <a href="#" className="hover:text-blue-300"><FaFacebookF /></a>
-//             <a href="#" className="hover:text-blue-300"><FaTwitter /></a>
-//             <a href="#" className="hover:text-blue-300"><FaInstagram /></a>
-//             <a href="#" className="hover:text-blue-300"><FaLinkedin /></a>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="text-center mt-10 border-t pt-6 text-sm text-blue-100">
-//         © {new Date().getFullYear()} TripHub. All rights reserved.
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;

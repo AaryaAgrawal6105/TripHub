@@ -1,19 +1,21 @@
 import { FaPlaneDeparture } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import logo from '../assets/logo-transparent.png'; // Adjust the path as necessary
 
 const HomeNavbar = () => {
   return (
-    <nav className="w-full bg-white/95 backdrop-blur-sm shadow-lg border-b border-gray-100 px-6 lg:px-12 py-4 flex items-center justify-between sticky top-0 z-50 transition-all duration-300">
+    <nav className="w-full bg-white/95 backdrop-blur-sm shadow-lg border-b border-gray-100 px-6 lg:px-12 py-2 flex items-center justify-between sticky top-0 z-50 transition-all duration-300">
       {/* Left: Logo and Name */}
-      <div className="flex items-center gap-3 group cursor-pointer">
-        <div className="relative">
-          <FaPlaneDeparture className="text-blue-600 text-3xl transform group-hover:rotate-12 transition-transform duration-300" />
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+      <div className="flex items-center gap-2 text-blue-600 text-2xl font-bold">
+                {/* <FaPlaneDeparture className="text-blue-600 text-3xl" />
+                <span>TripHub</span> */}
+                <img
+                src={logo}
+                alt="TripHub Logo"
+                className="h-12 w-auto object-contain"
+              />
+              <span>TripHub</span>
         </div>
-        <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-          TripHub
-        </span>
-      </div>
 
       {/* Center: Navigation Links */}
       <div className="hidden md:flex items-center gap-8">

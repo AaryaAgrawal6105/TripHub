@@ -6,6 +6,7 @@ import Jaipur from "../assets/jaipur.jpg";
 import Coorg from "../assets/coorg.jpg";
 import Ladakh from "../assets/ladakh.jpeg";
 import Andaman from "../assets/andaman.jpg";
+import { useNavigate } from "react-router-dom";
 
 const staticSuggestions = [
   {
@@ -53,6 +54,9 @@ const staticSuggestions = [
 ];
 
 const Dashboard = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-slate-50">
       
@@ -129,9 +133,17 @@ const Dashboard = () => {
 
 
 
-                  <button className="w-full bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <button
+                    onClick={() =>
+                      navigate("/explore", {
+                        state: { destination: trip.destination },
+                      })
+                    }
+                    className="w-full bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  >
                     Explore Destination
                   </button>
+
                 </div>
                   
               </div>

@@ -15,7 +15,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import CalendarModal from "@/components/CalendarModal";
 import { useState } from "react";
 import TripMap from "@/components/TripMap";
-import MapDropdown from "./MapDropdown";
+import MapButton from "./MapDropDown";
 
 export default function Navbar() {
   const { authUser, logout } = useAuthStore();
@@ -87,7 +87,7 @@ export default function Navbar() {
             )}
           </NavLink>
 
-          <MapDropdown />
+          <MapButton />
 
           {authUser && (
             <button

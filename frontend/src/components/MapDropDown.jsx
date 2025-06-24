@@ -1,29 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import TripMap from "./TripMap";
 
-const MapDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const MapButton = () => {
+  const navigate = useNavigate();
 
-  const toggleMap = () => setIsOpen((prev) => !prev);
+  const openMapPage = () => {
+    navigate("/map");
+  };
 
   return (
-    <div className="relative">
-      <button
-        onClick={toggleMap}
-        className="flex items-center gap-2 text-white bg-blue-600 px-3 py-2 rounded hover:bg-blue-700 transition"
-      >
-        <FaMapMarkerAlt />
-        Map
-      </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-[400px] z-50">
-          <TripMap />
-        </div>
-      )}
-    </div>
+    <button
+      onClick={openMapPage}
+      className="flex items-center gap-2 text-white bg-blue-600 px-3 py-2 rounded hover:bg-blue-700 transition"
+    >
+      <FaMapMarkerAlt />
+      Map
+    </button>
   );
 };
 
-export default MapDropdown;
+export default MapButton;

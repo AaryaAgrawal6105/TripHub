@@ -1,19 +1,24 @@
 const Trip = require('../models/Trip');
 
-const createTrip = async (req,res) => {
-    const{name, destination, startDate, endDate} = req.body;
-    try
-    {
-        const trip = await Trip.create({
-            name, destination, startDate, endDate, createdBy: req.userId, members: [req.userId]
-        });
+// Create trip with destination coordinates
+const createTrip = async (req, res) => {
+  const { name, destination, startDate, endDate, destinationCoordinates } = req.body;
 
-        res.status(201).json(trip);
-    }
-    catch(err)
-    {
-        res.status(500).json({msg: err.message});
-    }
+  try {
+    const trip = await Trip.create({
+      name,
+      destination,
+      destinationCoordinates, // ✅ save coords
+      startDate,
+      endDate,
+      createdBy: req.userId,
+      members: [req.userId],
+    });
+
+    res.status(201).json(trip);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
 };
 
 const getUserTrips = async (req,res) => {
@@ -59,8 +64,9 @@ const joinTrip = async (req, res) => {
 
 const getTripById = async (req, res) => {
   try {
-    const trip = await Trip.findById(req.params.id) .populate('members', 'name') // <-- This line is essential
-      .populate('createdBy', 'name');;
+    const trip = await Trip.findById(req.params.id)
+      .populate('members', 'name')
+      .populate('createdBy', 'name');
     if (!trip) return res.status(404).json({ msg: 'Trip not found' });
     res.json(trip);
   } catch (err) {
@@ -68,6 +74,7 @@ const getTripById = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
 
 const addTodo = async (req, res) => {
   const { id } = req.params;
@@ -245,8 +252,79 @@ const addMessage = async (req, res) => {
   }
 };
 
+// Add a new custom pin
+// Add a new custom pin
+const addSavedPin = async (req, res) => {
+  const { id } = req.params;
+  const { lat, lng, label } = req.body;
+
+  try {
+    const trip = await Trip.findById(id);
+    if (!trip) return res.status(404).json({ msg: 'Trip not found' });
+
+    trip.savedPins.push({ lat, lng, label });
+    await trip.save();
+
+    res.status(201).json(trip.savedPins);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Get all saved pins
+const getSavedPins = async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: 'Trip not found' });
+
+    res.json(trip.savedPins || []);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Delete a pin by its ID
+const deletePin = async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
+  if (!trip) return res.status(404).json({ msg: "Trip not found" });
+
+  trip.savedPins = trip.savedPins.filter(pin => pin._id.toString() !== req.params.pinId);
+  await trip.save();
+  res.json(trip.savedPins);
+};
+
+// Add a saved place to visit
+const addPlaceToVisit = async (req, res) => {
+  const { name, lat, lng, description } = req.body;
+
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: "Trip not found" });
+
+    const place = { name, lat, lng, description };
+    trip.placesToVisit.push(place);
+    await trip.save();
+    res.status(201).json(trip.placesToVisit);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Failed to add place" });
+  }
+};
+
+// Delete saved place
+const deletePlaceToVisit = async (req, res) => {
+  const trip = await Trip.findById(req.params.id);
+  if (!trip) return res.status(404).json({ msg: "Trip not found" });
+
+  trip.placesToVisit = trip.placesToVisit.filter(
+    (place) => place._id.toString() !== req.params.placeId
+  );
+  await trip.save();
+  res.json(trip.placesToVisit);
+};
 
 
 
 module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment,getMessages,
-  addMessage, deleteComment, getTripById };
+  addMessage, deleteComment, getTripById, getSavedPins, deletePin, addPlaceToVisit, deletePlaceToVisit ,addSavedPin};

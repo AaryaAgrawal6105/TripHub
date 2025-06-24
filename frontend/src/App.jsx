@@ -26,6 +26,8 @@ import TripItinerary from './pages/TripItinerary';
 import Trips from './pages/Trips';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import ExploreDestination from './pages/ExploreDestination';
+
 
 function App() {
   const location = useLocation();
@@ -59,6 +61,9 @@ function App() {
         <Route path="/invite" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        {/* <Route path="/destinations/:destName" element={<ExploreDestination />} /> */}
+        <Route path="/explore" element={<ExploreDestination />} />
+
 
         {/* Protected Routes */}  
         <Route path="/dashboard" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />

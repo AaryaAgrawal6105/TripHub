@@ -4,26 +4,23 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaPlaneDeparture,
   FaUserCircle,
   FaSignOutAlt,
   FaCalendarAlt,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 import { useAuthStore } from "@/store/useAuthStore";
 import CalendarModal from "@/components/CalendarModal";
 import { useState } from "react";
-import TripMap from "@/components/TripMap";
-import MapButton from "./MapDropDown";
-import MapDropdown from "./MapDropdown";
 import logo from "../assets/logo-transparent.png";
 import { HiMenu, HiX } from "react-icons/hi";
 
 export default function Navbar() {
   const { authUser, logout } = useAuthStore();
   const navigate = useNavigate();
-  const location = useLocation();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -32,16 +29,13 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  // Updated navItems with correct paths
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Trips", path: "/trips" },
     { name: "About Us", path: "/about" },
+    { name: "Map", path: "/map" }, // Added generic map route
   ];
 
-  // Get current trip ID from URL if available
-  const tripId = location.pathname.split('/')[2];
-  
   return (
     <>
       <nav className="w-full bg-white shadow-md px-4 py-2 flex items-center justify-between sticky top-0 z-50">
@@ -113,9 +107,6 @@ export default function Navbar() {
             )}
           </NavLink>
 
-          {/* Fixed: Pass tripId to MapButton */}
-          <MapButton tripId={tripId} />
-
           {authUser && (
             <button
               onClick={handleLogout}
@@ -176,11 +167,6 @@ export default function Navbar() {
               )}
             </NavLink>
 
-            {/* Fixed: Pass tripId to MapDropdown */}
-            <div onClick={() => setIsMobileMenuOpen(false)}>
-              <MapDropdown tripId={tripId} />
-            </div>
-
             {authUser && (
               <button
                 onClick={() => {
@@ -201,7 +187,6 @@ export default function Navbar() {
     </>
   );
 }
-
 
 
 // import {

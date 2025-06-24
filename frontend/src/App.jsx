@@ -67,7 +67,7 @@ function App() {
 
         {/* Protected Routes */}  
         <Route 
-          path="/trip/:id/map" 
+          path="/map" 
           element={authUser ? <TripMapPage /> : <Navigate to="/login" />} 
         />
         <Route path="/dashboard" element={authUser ? <Dashboard /> : <Navigate to="/login" />} />

@@ -30,20 +30,20 @@ const chatMessageSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-// Sub-schema for saved pins
-const savedPinSchema = new mongoose.Schema({
-  lat: Number,
-  lng: Number,
-  label: String,
-});
+  // Sub-schema for saved pins
+  const savedPinSchema = new mongoose.Schema({
+    lat: Number,
+    lng: Number,
+    label: String,
+  });
 
-// Sub-schema for saved places
-const placeSchema = new mongoose.Schema({
-  name: String,
-  lat: Number,
-  lng: Number,
-  description: String,
-});
+  // Sub-schema for saved places
+  const placeSchema = new mongoose.Schema({
+    name: String,
+    lat: Number,
+    lng: Number,
+    description: String,
+  });
 
 // Main Trip schema
 const tripSchema = new mongoose.Schema({

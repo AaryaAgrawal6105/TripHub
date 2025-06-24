@@ -254,6 +254,7 @@ const addMessage = async (req, res) => {
 
 // Add a new custom pin
 // Add a new custom pin
+// Add a new custom pin
 const addSavedPin = async (req, res) => {
   const { id } = req.params;
   const { lat, lng, label } = req.body;
@@ -262,9 +263,18 @@ const addSavedPin = async (req, res) => {
     const trip = await Trip.findById(id);
     if (!trip) return res.status(404).json({ msg: 'Trip not found' });
 
-    trip.savedPins.push({ lat, lng, label });
+    const newPin = { 
+      lat, 
+      lng, 
+      label,
+      addedBy: req.user.id,
+      addedAt: new Date()
+    };
+
+    trip.savedPins.push(newPin);
     await trip.save();
 
+    // Return the entire pins array
     res.status(201).json(trip.savedPins);
   } catch (err) {
     console.error(err);
@@ -293,7 +303,6 @@ const deletePin = async (req, res) => {
   await trip.save();
   res.json(trip.savedPins);
 };
-
 // Add a saved place to visit
 const addPlaceToVisit = async (req, res) => {
   const { name, lat, lng, description } = req.body;

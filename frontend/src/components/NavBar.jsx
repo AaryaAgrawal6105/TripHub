@@ -14,6 +14,8 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 import CalendarModal from "@/components/CalendarModal";
 import { useState } from "react";
+import TripMap from "@/components/TripMap";
+import MapButton from "./MapDropDown";
 import MapDropdown from "./MapDropdown";
 import logo from "../assets/logo-transparent.png";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -106,7 +108,7 @@ export default function Navbar() {
             )}
           </NavLink>
 
-          <MapDropdown />
+          <MapButton />
 
           {authUser && (
             <button

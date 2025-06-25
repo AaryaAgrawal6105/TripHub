@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
   MapContainer,
@@ -40,11 +40,8 @@ const ClickToAddPin = ({ onPinAdded }) => {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      console.log("Map clicked at:", lat, lng);
-      
       const label = prompt("Enter a label for this pin:");
       if (label && label.trim()) {
-        console.log("Adding pin with label:", label);
         onPinAdded({ lat, lng, label: label.trim() });
       }
     },
@@ -63,7 +60,6 @@ export default function TripMapPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [debugInfo, setDebugInfo] = useState("");
 
   const destinationCoords = selectedTrip?.destinationCoordinates;
   const mapCenter = destinationCoords
@@ -74,12 +70,6 @@ export default function TripMapPage() {
   useEffect(() => {
     const authenticate = async () => {
       try {
-        if (authUser) {
-          setAuthChecked(true);
-          setIsLoading(false);
-          return;
-        }
-
         const isAuthenticated = await checkAuth();
         setAuthChecked(true);
         
@@ -96,31 +86,19 @@ export default function TripMapPage() {
     };
 
     authenticate();
-  }, [authUser, checkAuth, navigate]);
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (authChecked && !authUser) {
-      navigate('/login');
-    }
-  }, [authChecked, authUser, navigate]);
+  }, [checkAuth, navigate]);
 
   // Fetch saved pins
   useEffect(() => {
     const fetchPins = async () => {
       if (selectedTrip?._id && authUser) {
         try {
-          console.log("Fetching pins for trip:", selectedTrip._id);
-          setDebugInfo(`Fetching pins for trip: ${selectedTrip._id}`);
           const pins = await getSavedPins(selectedTrip._id);
-          console.log("Fetched pins:", pins);
-          setDebugInfo(`Fetched ${pins?.length || 0} pins`);
           if (Array.isArray(pins)) {
             setSavedPinsList(pins);
           }
         } catch (error) {
           console.error("Error fetching pins:", error);
-          setDebugInfo(`Error fetching pins: ${error.message}`);
         }
       }
     };
@@ -134,10 +112,7 @@ export default function TripMapPage() {
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
-    setDebugInfo(`Searching for: ${searchQuery}`);
-    
     try {
-      console.log("Searching for:", searchQuery);
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           searchQuery
@@ -149,41 +124,31 @@ export default function TripMapPage() {
       }
       
       const data = await res.json();
-      console.log("Search results:", data);
       
       if (data.length > 0) {
         const { lat, lon, display_name } = data[0];
-        const result = {
+        setSearchResult({
           lat: parseFloat(lat),
           lng: parseFloat(lon),
           name: display_name,
-        };
-        console.log("Setting search result:", result);
-        setSearchResult(result);
-        setDebugInfo(`Found location: ${display_name}`);
+        });
       } else {
         alert("Location not found. Try a different search term.");
-        setDebugInfo("Location not found");
       }
     } catch (err) {
       console.error("Geocoding error:", err);
       alert("Error searching location. Please try again.");
-      setDebugInfo(`Search error: ${err.message}`);
     } finally {
       setIsSearching(false);
     }
   };
 
-  // Handle pin addition with better error handling and debugging
+  // Handle pin addition
   const handlePinAdd = async (pin) => {
     if (!selectedTrip?._id) {
       alert("No trip selected");
-      setDebugInfo("Error: No trip selected");
       return;
     }
-    
-    console.log("Adding pin:", pin, "to trip:", selectedTrip._id);
-    setDebugInfo(`Adding pin: ${pin.label} to trip: ${selectedTrip._id}`);
     
     // Create temporary pin for optimistic update
     const tempPin = { ...pin, _id: `temp_${Date.now()}`, isTemp: true };
@@ -191,38 +156,22 @@ export default function TripMapPage() {
     
     try {
       const updatedPins = await addSavedPin(selectedTrip._id, pin);
-      console.log("Pin added successfully, received:", updatedPins);
-      setDebugInfo(`Pin added successfully. Total pins: ${updatedPins?.length || 'unknown'}`);
       
       // Replace with real data from server
       if (Array.isArray(updatedPins)) {
         setSavedPinsList(updatedPins);
       } else {
         // Fallback: refetch pins
-        console.log("Unexpected response format, refetching pins...");
         const pins = await getSavedPins(selectedTrip._id);
         setSavedPinsList(pins || []);
       }
-      
     } catch (err) {
       console.error("Error saving pin:", err);
-      setDebugInfo(`Error saving pin: ${err.message}`);
-      alert(`Failed to save pin: ${err.message}`);
+      alert("Failed to save pin. Please try again.");
       
       // Remove the temporary pin on error
       setSavedPinsList(prev => prev.filter(p => p._id !== tempPin._id));
     }
-  };
-
-  // Test function for debugging
-  const handleTestPin = () => {
-    const testPin = {
-      lat: mapCenter[0] + (Math.random() - 0.5) * 0.1,
-      lng: mapCenter[1] + (Math.random() - 0.5) * 0.1,
-      label: "Test Pin " + new Date().toLocaleTimeString()
-    };
-    console.log("Testing pin add:", testPin);
-    handlePinAdd(testPin);
   };
 
   // Clear search result
@@ -243,19 +192,14 @@ export default function TripMapPage() {
     );
   }
 
-  // Don't render if not authenticated
-  if (!authUser) {
-    return null;
-  }
-
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <div className="mb-4 bg-white p-4 rounded-lg shadow-md border relative z-100">
+      <div className="mb-4 bg-white p-4 rounded-lg shadow-md border">
         <form onSubmit={handleSearch} className="flex gap-2 flex-wrap items-center">
           <input
             type="text"
             placeholder="Search for a location..."
-            className="px-3 py-2 border border-gray-300 rounded flex-1 min-w-[250px] focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            className="px-3 py-2 border border-gray-300 rounded flex-1 min-w-[250px] focus:outline-none focus:border-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             disabled={isSearching}
@@ -276,42 +220,26 @@ export default function TripMapPage() {
               Clear
             </button>
           )}
-          <button 
-            type="button"
-            onClick={handleTestPin}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
-          >
-            Test Pin
-          </button>
         </form>
       </div>
+      
       <h1 className="text-2xl font-semibold mb-4">
         Trip Map - {selectedTrip?.name || 'Unknown Trip'}
       </h1>
-      
-      {/* Debug Info */}
-      {debugInfo && (
-        <div className="mb-4 p-2 bg-yellow-100 border border-yellow-300 rounded text-sm">
-          <strong>Debug:</strong> {debugInfo}
-        </div>
-      )}
-      
-      {/* Search and Test Controls - Fixed positioning */}
 
-      {/* Map Container - Fixed z-index issues */}
+      {/* Map Container */}
+      <div className="h-[70vh] w-full rounded-lg shadow-lg relative overflow-hidden border">
+        <MapContainer
+          center={mapCenter}
+          zoom={destinationCoords ? 8 : 5}
+          scrollWheelZoom={true}
+          className="h-full w-full rounded-lg"
+        >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
           />
 
-      <div className="h-[70vh] w-full rounded-lg shadow-lg relative overflow-hidden border z-0">
-        <MapContainer
-          center={mapCenter}
-          zoom={destinationCoords ? 8 : 5}
-          scrollWheelZoom={true}
-          className="h-full w-full rounded-lg z-0"
-          style={{ zIndex: 0 }}
-        >
           {/* Destination marker */}
           {destinationCoords && (
             <Marker position={[destinationCoords.lat, destinationCoords.lng]}>
@@ -357,9 +285,9 @@ export default function TripMapPage() {
           )}
 
           {/* Saved pins */}
-          {savedPinsList.map((pin, index) => (
+          {savedPinsList.map((pin) => (
             <Marker 
-              key={pin._id || `pin-${index}`} 
+              key={pin._id} 
               position={[pin.lat, pin.lng]}
             >
               <Popup>
@@ -379,17 +307,6 @@ export default function TripMapPage() {
           {/* Click to add pins */}
           <ClickToAddPin onPinAdded={handlePinAdd} />
         </MapContainer>
-        
-        {/* Instructions overlay - Fixed positioning */}
-        <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-lg text-sm max-w-xs z-10 border">
-          <div className="font-medium text-blue-600 mb-1">💡 How to use:</div>
-          <ul className="text-xs space-y-1">
-            <li>• Click anywhere on map to add pins</li>
-            <li>• Search for locations above</li>
-            <li>• Save search results as pins</li>
-            <li>• Use Test Pin button to debug</li>
-          </ul>
-        </div>
       </div>
 
       {/* Saved Pins List */}

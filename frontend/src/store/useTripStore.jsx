@@ -21,21 +21,15 @@ export const useTripStore = create((set, get) => ({
     localStorage.setItem('selectedTrip', JSON.stringify(normalizedTrip));
     set({ trip: normalizedTrip });
   },
-
   fetchTripById: async (tripId) => {
     if (!tripId) return;
     try {
-      console.log("Fetching trip by ID:", tripId);
       const res = await axiosInstance.get(`/trips/${tripId}`);
       if (res.data && res.data._id) {
-        get().setTrip(res.data);
         get().setSelectedTrip(res.data);
-      } else {
-        console.warn("Invalid trip data returned from backend", res.data);
       }
     } catch (err) {
       console.error('Failed to fetch trip:', err);
-      throw err;
     }
   },
 
@@ -113,56 +107,28 @@ export const useTripStore = create((set, get) => ({
 
   // Pin functions - Fixed
   getSavedPins: async (tripId) => {
-    if (!tripId) {
-      console.warn("No tripId provided to getSavedPins");
-      return [];
-    }
+    if (!tripId) return [];
     
     try {
-      console.log("Getting saved pins for trip:", tripId);
       const res = await axiosInstance.get(`/trips/${tripId}/pins`);
-      console.log("API response for pins:", res.data);
-      
       const pins = Array.isArray(res.data) ? res.data : [];
       set({ savedPins: pins });
       return pins;
     } catch (err) {
       console.error("Failed to fetch saved pins:", err);
-      
-      // Check if it's a 404 (trip not found) vs other errors
-      if (err.response?.status === 404) {
-        console.warn("Trip not found when fetching pins");
-        return [];
-      }
-      
-      throw err;
+      return [];
     }
   },
-
   addSavedPin: async (tripId, pinData) => {
-    if (!tripId || !pinData) {
-      throw new Error("Missing tripId or pinData");
-    }
+    if (!tripId || !pinData) return [];
     
     try {
-      console.log("Adding pin to trip:", tripId, pinData);
       const res = await axiosInstance.post(`/trips/${tripId}/pins`, pinData);
-      console.log("Add pin API response:", res.data);
-      
-      // The backend returns the full pins array
       const updatedPins = Array.isArray(res.data) ? res.data : [];
       set({ savedPins: updatedPins });
-      
       return updatedPins;
     } catch (err) {
       console.error("Failed to add pin:", err);
-      
-      // Log more details about the error
-      if (err.response) {
-        console.error("Error response:", err.response.data);
-        console.error("Error status:", err.response.status);
-      }
-      
       throw err;
     }
   },

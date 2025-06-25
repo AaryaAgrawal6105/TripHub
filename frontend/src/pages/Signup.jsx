@@ -280,7 +280,7 @@ const Signup = () => {
 
 export default Signup;
 
-// import React, { useState } from 'react';
+
 // import { FaEnvelope, FaLock, FaUser, FaGoogle, FaFacebook, FaApple } from 'react-icons/fa';
 // import { Link } from 'react-router-dom';
 // // import { toast } from 'react-toastify';

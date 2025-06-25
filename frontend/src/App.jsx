@@ -50,7 +50,7 @@ function App() {
 
   return (
     <div className="App">
-      {!hideNavbar && (location.pathname === '/' ? <HomeNavbar /> : <Navbar />)}
+      {!hideNavbar && ((location.pathname === '/') ? <HomeNavbar /> : <Navbar />)}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />

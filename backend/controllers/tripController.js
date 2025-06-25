@@ -65,8 +65,14 @@ const joinTrip = async (req, res) => {
 const getTripById = async (req, res) => {
   try {
     const trip = await Trip.findById(req.params.id)
-      .populate('members', 'name')
-      .populate('createdBy', 'name');
+  .populate({
+    path: 'members',
+    select: 'name email profilePic'
+  })
+  .populate({
+    path: 'createdBy',
+    select: 'name email profilePic'
+  });
     if (!trip) return res.status(404).json({ msg: 'Trip not found' });
     res.json(trip);
   } catch (err) {

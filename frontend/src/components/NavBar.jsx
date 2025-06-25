@@ -35,6 +35,7 @@ export default function Navbar() {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Trips", path: "/trips" },
     { name: "About Us", path: "/about" },
+    { name: "Blogs", path: "/home/blogs"}
   ];
 
   return (

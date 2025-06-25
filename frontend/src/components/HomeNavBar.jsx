@@ -17,38 +17,6 @@ const HomeNavbar = () => {
               <span>TripHub</span>
         </div>
 
-      {/* Center: Navigation Links */}
-      <div className="hidden md:flex items-center gap-8">
-        <NavLink
-          to="/home/blogs"
-          className={({ isActive }) =>
-            `relative text-lg font-medium transition-all duration-300 group ${
-              isActive
-                ? "text-blue-600"
-                : "text-gray-700 hover:text-blue-600"
-            }`
-          }
-        >
-          Blogs
-          <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-800 transition-all duration-300 group-hover:w-full"></span>
-        </NavLink>
-        
-        <NavLink
-          to="/about"
-          className={({ isActive }) =>
-            `relative text-lg font-medium transition-all duration-300 group ${
-              isActive
-                ? "text-blue-600"
-                : "text-gray-700 hover:text-blue-600"
-            }`
-          }
-        >
-          About Us
-          <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-800 transition-all duration-300 group-hover:w-full"></span>
-        </NavLink>
-
-      </div>
-
       {/* Right: Auth Buttons */}
       <div className="flex items-center gap-3">
         <NavLink

@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app); // ⬅️ use HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // frontend URL
+    origin: "https://triphub-frontend.onrender.com", // frontend URL
     credentials: true,
   },
 });
@@ -26,7 +26,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const aiRoutes = require("./routes/aiRoutes");
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://triphub-frontend.onrender.com", credentials: true }));
 app.use(express.json());
 
 // Connect DB

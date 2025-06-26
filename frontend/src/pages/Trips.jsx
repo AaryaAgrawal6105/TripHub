@@ -5,6 +5,8 @@ import { FaPlus, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaRoute } from "react-i
 import { toast } from "react-toastify";
 import { useTripStore } from "@/store/useTripStore";
 import { useEffect, useState } from "react";
+import { FaTrash } from "react-icons/fa";
+
 
 const Trips = () => {
     const [trips, setTrips] = useState([]);
@@ -39,18 +41,32 @@ const Trips = () => {
         const end = new Date(endDate);
         const diffTime = Math.abs(end - start);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        
+
         return {
-            formatted: `${start.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            })} - ${end.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
+            formatted: `${start.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            })} - ${end.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
             })}`,
             duration: `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
         };
+    };
+
+    const handleDelete = async (e, id) => {
+        e.stopPropagation(); // Prevent card click navigation
+        if (!window.confirm("Are you sure you want to delete this trip?")) return;
+
+        try {
+            await axiosInstance.delete(`/trips/${id}`);
+            setTrips((prevTrips) => prevTrips.filter((trip) => trip._id !== id));
+            toast.success("Trip deleted successfully!");
+        } catch (err) {
+            console.error("Failed to delete trip:", err);
+            toast.error("Failed to delete trip");
+        }
     };
 
     const getRandomGradient = (index) => {
@@ -98,8 +114,8 @@ const Trips = () => {
                         <div>
                             <h1 className="text-4xl font-bold text-white mb-2">Your Trips</h1>
                             <p className="text-blue-100 text-lg">
-                                {trips.length === 0 
-                                    ? "Ready to start your adventure? Create your first trip!" 
+                                {trips.length === 0
+                                    ? "Ready to start your adventure? Create your first trip!"
                                     : `${trips.length} ${trips.length === 1 ? 'trip' : 'trips'} planned and ready to explore`
                                 }
                             </p>
@@ -113,7 +129,7 @@ const Trips = () => {
                         </button>
                     </div>
                 </div>
-                
+
                 {/* Decorative elements */}
                 <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
                 <div className="absolute bottom-10 left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-xl"></div>
@@ -144,7 +160,7 @@ const Trips = () => {
                         {trips.map((trip, index) => {
                             const dateInfo = formatDateRange(trip.startDate, trip.endDate);
                             const gradientClass = getRandomGradient(index);
-                            
+
                             return (
                                 <div
                                     key={trip._id}
@@ -162,19 +178,29 @@ const Trips = () => {
                                                 {trip.name}
                                             </h3>
                                         </div>
-                                        
+
                                         {/* Decorative circle */}
                                         <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full"></div>
                                     </div>
 
                                     {/* Content */}
-                                    <div className="p-6">
+                                    <div className="p-6 relative">
+                                        {/* DELETE BUTTON */}
+                                        <button
+                                            onClick={(e) => handleDelete(e, trip._id)}
+                                            className="absolute top-4 right-4 text-red-500 hover:text-red-700 p-2 rounded-full bg-red-100 hover:bg-red-200 transition"
+                                            title="Delete trip"
+                                        >
+                                            <FaTrash />
+                                        </button>
+
+                                        {/* Existing trip info content */}
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-3 text-gray-600">
                                                 <FaMapMarkerAlt className="text-blue-500 flex-shrink-0" />
                                                 <span className="font-medium text-gray-800">{trip.destination}</span>
                                             </div>
-                                            
+
                                             <div className="flex items-center gap-3 text-gray-600">
                                                 <FaCalendarAlt className="text-green-500 flex-shrink-0" />
                                                 <span className="text-sm">{dateInfo.formatted}</span>
@@ -186,7 +212,7 @@ const Trips = () => {
                                             </div>
                                         </div>
 
-                                        {/* Action indicator */}
+                                        {/* Existing bottom action indicator */}
                                         <div className="mt-6 flex items-center justify-between">
                                             <span className="text-sm text-gray-500">Click to view details</span>
                                             <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors">
@@ -196,6 +222,7 @@ const Trips = () => {
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             );
                         })}
@@ -206,7 +233,7 @@ const Trips = () => {
                 {trips.length > 0 && (
                     <div className="text-center mt-12">
                         <div className="inline-flex items-center gap-4 bg-gradient-to-r from-gray-50 to-blue-50 border-2 border-dashed border-blue-200 text-blue-600 px-8 py-6 rounded-2xl hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 cursor-pointer group"
-                             onClick={() => navigate("/create-trip")}>
+                            onClick={() => navigate("/create-trip")}>
                             <FaPlus className="text-2xl group-hover:rotate-90 transition-transform duration-300" />
                             <div className="text-left">
                                 <div className="font-semibold text-lg">Plan Another Adventure</div>

@@ -339,7 +339,18 @@ const deletePlaceToVisit = async (req, res) => {
   res.json(trip.placesToVisit);
 };
 
+const deleteTrip = async (req, res) => {
+  const tripId = req.params.id;
+  try {
+    const trip = await Trip.findByIdAndDelete(tripId);
+    if (!trip) return res.status(404).json({ msg: 'Trip not found' });
 
+    res.status(200).json({ msg: 'Trip deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting trip:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
 
 module.exports = { createTrip, getUserTrips, joinTrip, addTodo, toggleTodo, deleteTodo, addBudget, deleteBudget, addItinerary, deleteItinerary, addComment,getMessages,
-  addMessage, deleteComment, getTripById, getSavedPins, deletePin, addPlaceToVisit, deletePlaceToVisit ,addSavedPin};
+  addMessage, deleteComment, getTripById, getSavedPins, deletePin, addPlaceToVisit, deletePlaceToVisit ,addSavedPin, deleteTrip};

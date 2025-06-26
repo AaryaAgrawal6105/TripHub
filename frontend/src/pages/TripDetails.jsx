@@ -12,6 +12,7 @@ const TripDetails = () => {
   const { authUser } = useAuthStore();
   const [inviteEmail, setInviteEmail] = useState("");
   const [newTodo, setNewTodo] = useState("");
+  const [memberDetails, setMemberDetails] = useState([]); // ✅ Add state for member details
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +20,34 @@ const TripDetails = () => {
       fetchTripById(tripId);
     }
   }, [tripId]);
+
+  // ✅ Fetch member details when trip is loaded
+  useEffect(() => {
+    const fetchMemberDetails = async () => {
+      if (trip?.members && Array.isArray(trip.members)) {
+        try {
+          // Check if members are already populated (have name property)
+          const firstMember = trip.members[0];
+          if (firstMember && typeof firstMember === 'object' && firstMember.name) {
+            // Members are already populated
+            setMemberDetails(trip.members);
+            return;
+          }
+
+          // Members are just IDs, need to fetch details
+          const response = await axiosInstance.post('/users/by-ids', {
+            userIds: trip.members
+          });
+          setMemberDetails(response.data);
+        } catch (error) {
+          console.error('Error fetching member details:', error);
+          setMemberDetails([]);
+        }
+      }
+    };
+
+    fetchMemberDetails();
+  }, [trip]);
 
   if (!trip) {
     return (
@@ -60,6 +89,12 @@ const TripDetails = () => {
   const handleDeleteTodo = async (todoId) => {
     await deleteTodo(trip._id, todoId);
   };
+
+  // ✅ Check if createdBy is populated or just an ID
+  const isCreator = authUser && (
+    (trip.createdBy._id && authUser._id === trip.createdBy._id) ||
+    (typeof trip.createdBy === 'string' && authUser._id === trip.createdBy)
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -112,47 +147,58 @@ const TripDetails = () => {
                         <p className="text-lg font-semibold text-slate-800">{trip.destination}</p>
                       </div>
                     </div>
+                    
+                    {/* ✅ FIXED: Use memberDetails state */}
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-  <span className="text-2xl">👥</span>
-  <div>
-    <p className="text-sm font-medium text-slate-600">Trip Members</p>
-    <p className="text-lg font-semibold text-slate-800">
-      {trip.members?.length || 1} member{trip.members?.length > 1 ? "s" : ""}
-    </p>
-    <div className="flex flex-wrap gap-2 mt-2">
-  {trip.members?.map((member, index) => {
-    const displayName = member?.name || 
-                      member?.email?.split('@')[0] || 
-                      "Unnamed";
-    const isCreator = member._id?.toString() === trip.createdBy?._id?.toString();
-    
-    return (
-      <span
-        key={member._id || index}
-        className="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full shadow-sm border border-slate-200"
-      >
-        {displayName}{isCreator ? " (Creator)" : ""}
-      </span>
-    );
-  })}
-</div>
-
-  </div>
-</div>
+                      <span className="text-2xl">👥</span>
+                      <div>
+                        <p className="text-sm font-medium text-slate-600">Trip Members</p>
+                        <p className="text-lg font-semibold text-slate-800">
+                          {memberDetails.length || 1} member{memberDetails.length !== 1 ? "s" : ""}
+                        </p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {memberDetails.length > 0 ? (
+                            memberDetails.map((member) => {
+                              const displayName = member.name || 
+                                                member.email?.split('@')[0] || 
+                                                'Unknown User';
+                              
+                              const memberId = member._id;
+                              const creatorId = trip.createdBy._id || trip.createdBy;
+                              const isMemberCreator = memberId === creatorId;
+                              
+                              return (
+                                <span
+                                  key={memberId}
+                                  className="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full shadow-sm border border-slate-200"
+                                >
+                                  {displayName}{isMemberCreator ? " (Creator)" : ""}
+                                </span>
+                              );
+                            })
+                          ) : (
+                            <span className="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-full shadow-sm border border-slate-200">
+                              Loading members...
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  
                   <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
                     <span className="text-2xl">📅</span>
                     <div>
                       <p className="text-sm font-medium text-slate-600">Travel Dates</p>
                       <p className="text-lg font-semibold text-slate-800">
-                        {new Date(trip.startDate).toLocaleDateString('en-US', { 
-                          month: 'long', 
-                          day: 'numeric', 
-                          year: 'numeric' 
-                        })} - {new Date(trip.endDate).toLocaleDateString('en-US', { 
-                          month: 'long', 
-                          day: 'numeric', 
-                          year: 'numeric' 
+                        {new Date(trip.startDate).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })} - {new Date(trip.endDate).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric'
                         })}
                       </p>
                     </div>
@@ -160,7 +206,7 @@ const TripDetails = () => {
                 </div>
               </div>
 
-                         {/* Action Buttons */}
+              {/* Action Buttons */}
               <div className="grid md:grid-cols-2 gap-4">
                 <button
                   onClick={() => navigate(`/trip/${trip._id}/expenses`)}
@@ -189,9 +235,8 @@ const TripDetails = () => {
                 </button>
               </div>
 
-
               {/* Invite Section */}
-              {authUser && authUser._id === trip.createdBy ? (
+              {isCreator ? (
                 <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                   <div className="bg-gradient-to-r from-slate-50 to-green-50 px-6 py-4 border-b border-slate-200">
                     <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
@@ -238,7 +283,6 @@ const TripDetails = () => {
                 </div>
               )}
 
-
               {/* Todos Section */}
               <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                 <div className="bg-gradient-to-r from-slate-50 to-green-50 px-6 py-4 border-b border-slate-200">
@@ -265,8 +309,8 @@ const TripDetails = () => {
                       Add
                     </button>
                   </div>
-                  
-                  {trip.todos.length === 0 ? (
+
+                  {trip.todos?.length === 0 ? (
                     <div className="text-center py-8">
                       <span className="text-6xl block mb-4">📝</span>
                       <p className="text-slate-500 text-lg">No tasks yet.</p>
@@ -274,16 +318,15 @@ const TripDetails = () => {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {trip.todos.map((todo) => (
+                      {trip.todos?.map((todo) => (
                         <div
                           key={todo._id}
-                          className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                            todo.done
-                              ? "bg-green-50 border-green-200 text-green-700"
-                              : "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300"
-                          }`}
+                          className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all ${todo.done
+                            ? "bg-green-50 border-green-200 text-green-700"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300"
+                            }`}
                         >
-                          <div 
+                          <div
                             className="flex items-center gap-3 cursor-pointer"
                             onClick={() => handleToggleTodo(todo._id)}
                           >
@@ -309,10 +352,6 @@ const TripDetails = () => {
                   )}
                 </div>
               </div>
-
-             
-
-              
             </div>
           </div>
         </div>
@@ -322,12 +361,3 @@ const TripDetails = () => {
 };
 
 export default TripDetails;
-
-
-
-
-
-
-
-
-

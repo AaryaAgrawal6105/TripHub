@@ -21,12 +21,16 @@ export const useTripStore = create((set, get) => ({
     localStorage.setItem('selectedTrip', JSON.stringify(normalizedTrip));
     set({ trip: normalizedTrip });
   },
+
+  // ✅ FIXED: This function now properly sets both selectedTrip AND trip
   fetchTripById: async (tripId) => {
     if (!tripId) return;
     try {
       const res = await axiosInstance.get(`/trips/${tripId}`);
       if (res.data && res.data._id) {
+        // Set both selectedTrip and trip with the populated data
         get().setSelectedTrip(res.data);
+        get().setTrip(res.data); // ✅ This was missing!
       }
     } catch (err) {
       console.error('Failed to fetch trip:', err);

@@ -137,13 +137,7 @@ const { login } = useAuthStore();
 
               {/* Forgot Password */}
               <div className="text-right mb-6">
-                <a 
-                  href="/forgot-password" 
-                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-all duration-200 relative group"
-                >
-                  Forgot your password?
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
-                </a>
+                <Link to="/forgot-password" className="text-blue-600"> Forgot your password?</Link>
               </div>
 
               {/* Login Button */}
@@ -177,7 +171,7 @@ const { login } = useAuthStore();
               {/* Sign Up Link */}
               <p className="text-center text-gray-600 text-sm">
                 Don't have an account?{' '}
-                <Link to="/signup" className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300">Create Account</Link>
+                <Link to="/signup" className="text-blue-600">Create Account</Link>
               </p>
             </div>
           </div>

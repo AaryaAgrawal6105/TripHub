@@ -148,8 +148,15 @@ const TripDetails = () => {
                       </div>
                     </div>
                     
-                    {/* ✅ FIXED: Use memberDetails state */}
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
+                       <span className="text-2xl">👥</span>
+                       <div>
+                         <p className="text-sm font-medium text-slate-600">Total Members</p>
+                        <p className="text-lg font-semibold text-slate-800">{trip.members?.length || 1}</p>
+                       </div>
+                     </div>
+                    {/* ✅ FIXED: Use memberDetails state */}
+                    {/* <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
                       <span className="text-2xl">👥</span>
                       <div>
                         <p className="text-sm font-medium text-slate-600">Trip Members</p>
@@ -183,7 +190,7 @@ const TripDetails = () => {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   
                   <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">

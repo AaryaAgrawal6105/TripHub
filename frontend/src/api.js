@@ -2,7 +2,6 @@ import axios from 'axios'
 
 export const axiosInstance = axios.create({
     baseURL:"https://triphub-backend-3x8e.onrender.com/api",
-    withCredentials :true
 });
 
 

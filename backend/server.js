@@ -26,7 +26,13 @@ const eventRoutes = require('./routes/eventRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const aiRoutes = require("./routes/aiRoutes");
 
-app.use(cors({ origin: "https://triphub-frontend.onrender.com", credentials: true }));
+app.use(cors({
+  origin: "https://triphub-frontend.onrender.com",
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'] 
+}));
+
 app.use(express.json());
 
 // Connect DB

@@ -49,7 +49,16 @@ export const useAuthStore = create(persist(
     login: async (data, navigate) => {
       set({ isLogginIn: true });
       try {
-        const response = await axiosInstance.post('/auth/login', data);
+        const response = await axiosInstance.post(
+          '/auth/login',
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
+
         localStorage.setItem('authToken', response.data.token);
         set({ authUser: response.data.user });
         toast.success("Logged in successfully");

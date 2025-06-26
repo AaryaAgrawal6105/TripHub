@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { io } from 'socket.io-client';
 import { axiosInstance } from '../api';
 
-const socket = io('http://localhost:5000'); // Make sure backend is running here
+const socket = io('https://triphub-backend-3x8e.onrender.com'); // Make sure backend is running here
 
 export const useChatStore = create((set, get) => ({
   messages: [],

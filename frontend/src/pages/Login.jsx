@@ -176,13 +176,7 @@ const { login } = useAuthStore();
               {/* Sign Up Link */}
               <p className="text-center text-gray-600 text-sm">
                 Don't have an account?{' '}
-                <a 
-                  href="/signup" 
-                  className="font-bold text-blue-600 hover:text-blue-700 hover:underline transition-all duration-200 relative group"
-                >
-                  Create Account
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
-                </a>
+                <Link to="/signup" className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300">Create Account</Link>
               </p>
             </div>
           </div>

@@ -263,9 +263,7 @@ const Signup = () => {
               {/* Login Link */}
               <p className="text-center text-gray-600 mt-6">
                 Already have an account?{' '}
-                <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-all duration-200 relative group">
-                  Sign in here
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                <Link to="/login" className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300">Sign in here</Link>
                 </a>
               </p>
             </div>

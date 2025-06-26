@@ -16,7 +16,7 @@ const sendTripInvite = async (req, res) => {
             return res.status(403).json({ msg: 'Only the trip creator can send invites' });
         }
 
-        const inviteLink = `http://localhost:5173/trip/${trip._id}/join`;
+        const inviteLink = `https://triphub-frontend.onrender.com/trip/${trip._id}/join`;
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',

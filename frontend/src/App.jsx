@@ -6,7 +6,7 @@ import './App.css';
 
 import { useAuthStore } from './store/useAuthStore';
 
-import Navbar from './components/Navbar';
+import Navbar from './components/NavBar';
 import HomeNavbar from './components/HomeNavBar';
 import Footer from './components/Footer';
 

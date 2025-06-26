@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaEnvelope, FaLock, FaUser, FaGoogle, FaFacebook, FaApple, FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
 import { useAuthStore } from '../store/useAuthStore'; // Adjust the import path as necessary
 import { useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });

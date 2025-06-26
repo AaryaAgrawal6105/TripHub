@@ -230,7 +230,10 @@ const About = () => {
             <p className="text-gray-600 mb-8 text-base lg:text-lg font-light leading-relaxed max-w-2xl mx-auto">
               Join thousands of travelers who've discovered the smarter way to plan group adventures.
             </p>
-            <Link to="/signup" className="group relative inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white transition-all duration-300 ease-out transform hover:scale-105"></Link>
+            <Link
+              to="/signup"
+              className="group relative inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white transition-all duration-300 ease-out transform hover:scale-105"
+            >
               <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg transition-all duration-300 group-hover:from-blue-500 group-hover:to-violet-500 shadow-lg"></span>
               <span className="absolute inset-0 bg-gradient-to-r from-blue-700 to-violet-700 rounded-lg opacity-0 transition-all duration-300 group-hover:opacity-100 blur-sm"></span>
               <span className="relative flex items-center">
@@ -239,7 +242,7 @@ const About = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>

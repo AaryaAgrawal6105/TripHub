@@ -97,7 +97,7 @@ const forgotPassword = async (req, res) => {
     user.resetTokenExpiry = Date.now() + 3600000; // 1 hr
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    const resetLink = `https://triphub-frontend.onrender.com/reset-password/${token}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_ID,

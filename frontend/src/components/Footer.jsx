@@ -5,15 +5,14 @@ import {
   FaLinkedinIn,
   FaPlaneDeparture,
 } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 import logo from '../assets/logo-transparent.png';
 
 const Footer = () => {
   return (
     <footer className="relative w-full bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white mt-auto overflow-hidden">
-      {/* Decorative top border */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500"></div>
 
-      {/* Background pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-10 left-1/4 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl"></div>
         <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl"></div>
@@ -27,9 +26,9 @@ const Footer = () => {
             <div className="group flex items-center text-2xl font-bold">
               <div className="relative">
                 <img
-                            src={logo}
-                            alt="TripHub Logo"
-                            className="h-10 w-auto object-contain"
+                  src={logo}
+                  alt="TripHub Logo"
+                  className="h-10 w-auto object-contain"
                 />
                 <div className="absolute inset-0 bg-blue-400/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
@@ -60,13 +59,13 @@ const Footer = () => {
                 ["Sign Up", "/signup"],
               ].map(([text, link]) => (
                 <li key={text}>
-                  <a
-                    href={link}
+                  <Link
+                    to={link}
                     className="group flex items-center hover:text-white transition-all duration-300 hover:translate-x-1"
                   >
                     <span className="w-0 h-0.5 bg-blue-400 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2 rounded-full"></span>
                     {text}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -86,13 +85,13 @@ const Footer = () => {
                 "Smart Recommendations",
               ].map((item) => (
                 <li key={item}>
-                  <a
-                    href="/dashboard"
+                  <Link
+                    to="/dashboard"
                     className="group flex items-center hover:text-white transition-all duration-300 hover:translate-x-1"
                   >
                     <span className="w-0 h-0.5 bg-purple-400 group-hover:w-4 transition-all duration-300 mr-0 group-hover:mr-2 rounded-full"></span>
                     {item}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -138,4 +137,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;

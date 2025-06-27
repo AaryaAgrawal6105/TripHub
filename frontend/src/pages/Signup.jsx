@@ -263,7 +263,13 @@ const Signup = () => {
               {/* Login Link */}
               <p className="text-center text-gray-600 mt-6">
                 Already have an account?{' '}
-                <Link to="/login" className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300">Sign in here</Link>
+                <Link
+  to="/login"
+  className="relative inline-block text-blue-600 font-medium hover:underline after:content-[''] after:block after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full"
+>
+  Sign in here
+</Link>
+
               </p>
             </div>
           </div>

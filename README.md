@@ -185,5 +185,5 @@ Contributions are welcome! 🚀
 
 ## 🌍 Live Demo (Coming Soon)
 
-- Frontend: [https://triphub.vercel.app](https://triphub.vercel.app)
-- Backend API: [https://triphub.fly.dev/api](https://triphub.fly.dev/api)
+- Frontend: [https://triphub.vercel.app](https://triphub-frontend.onrender.com)
+- Backend API: [https://triphub.fly.dev/api](https://triphub-backend-3x8e.onrender.com)

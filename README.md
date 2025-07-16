@@ -28,7 +28,6 @@ TripHub is a full-stack web application that simplifies planning group trips. In
 - 📅 Plan daily itineraries
 - 💬 Comment on trip elements
 - 📩 Send trip invite via email
-- 🗺️ Integrated with Google Maps
 - 🔐 JWT-based authentication
 - 💾 Global trip state managed via Zustand and persisted in localStorage
 
@@ -43,7 +42,6 @@ TripHub is a full-stack web application that simplifies planning group trips. In
 | Database      | MongoDB (Atlas)                    |
 | Auth          | JWT (JSON Web Token)               |
 | Email         | Nodemailer + Gmail App Password    |
-| Maps          | Google Maps API                    |
 | Deployment    | Fly.io (backend), Vercel (frontend) |
 
 ---
